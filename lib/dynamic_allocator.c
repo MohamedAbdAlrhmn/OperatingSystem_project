@@ -62,7 +62,15 @@ void initialize_MemBlocksList(uint32 numOfBlocks)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] initialize_MemBlocksList
 	// Write your code here, remove the panic and write your code
-	panic("initialize_MemBlocksList() is not implemented yet...!!");
+	//panic("initialize_MemBlocksList() is not implemented yet...!!");
+	LIST_INIT(&AvailableMemBlocksList);
+		for(int y=0;y<numOfBlocks;y++)
+		{
+			LIST_INSERT_HEAD(&AvailableMemBlocksList, &(MemBlockNodes[y]));
+
+		}
+
+
 
 }
 

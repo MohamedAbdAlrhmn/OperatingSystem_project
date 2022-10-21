@@ -81,7 +81,22 @@ struct MemBlock *find_block(struct MemBlock_List *blockList, uint32 va)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] find_block
 	// Write your code here, remove the panic and write your code
-	panic("find_block() is not implemented yet...!!");
+//	panic("find_block() is not implemented yet...!!");
+
+	struct MemBlock *point;
+	LIST_FOREACH(point,blockList)
+	{
+		if(va==point->sva)
+		{
+		   return point;
+		   break;
+
+		}
+
+
+
+	}
+	return NULL;
 
 }
 

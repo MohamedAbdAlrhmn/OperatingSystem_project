@@ -107,7 +107,77 @@ void insert_sorted_allocList(struct MemBlock *blockToInsert)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] insert_sorted_allocList
 	// Write your code here, remove the panic and write your code
-	panic("insert_sorted_allocList() is not implemented yet...!!");
+	//panic("insert_sorted_allocList() is not implemented yet...!!");
+	/*uint32 result_1;
+		uint32 result_2;
+		uint32 space = blockToInsert->size + blockToInsert->sva;
+		uint32 size = LIST_SIZE(&(AllocMemBlocksList));
+		if (size == 0)
+		{
+			LIST_INSERT_HEAD(&AllocMemBlocksList,blockToInsert);
+		}
+		else
+		{
+			struct MemBlock *element;
+			struct MemBlock *next_element;
+			LIST_FOREACH(element, &AllocMemBlocksList)
+			{
+				result_1 = element->size +element->sva;
+				next_element = LIST_NEXT(element);
+				result_2 = next_element->size + next_element->sva;
+				if (space > result_1 && space < result_2)
+				{
+					element->prev_next_info.le_next = blockToInsert;
+					next_element->prev_next_info.le_prev =blockToInsert;
+					blockToInsert->prev_next_info.le_prev = element;
+					break;
+				}
+				else if (space < result_1)
+				{
+					blockToInsert->prev_next_info.le_next = element;
+					element->prev_next_info.le_prev = blockToInsert;
+					LIST_INSERT_HEAD(&AllocMemBlocksList,blockToInsert);
+					break;
+				}
+				else if (next_element == NULL)
+				{
+					LIST_INSERT_TAIL(&AllocMemBlocksList,blockToInsert);
+					break;
+				}
+			}
+		}*/
+		struct MemBlock *head = LIST_FIRST(&AllocMemBlocksList) ;
+		struct MemBlock *tail = LIST_LAST(&AllocMemBlocksList) ;
+
+		if (head == tail || blockToInsert->sva <= head->sva || blockToInsert->sva >= tail->sva )
+		{
+			if(head == NULL )
+			{
+				LIST_INSERT_HEAD(&AllocMemBlocksList, blockToInsert);
+			}
+			else if (blockToInsert->sva <= head->sva)
+			{
+				LIST_INSERT_BEFORE(&AllocMemBlocksList,head, blockToInsert);
+			}
+			else if (blockToInsert->sva >= tail->sva )
+			{
+				LIST_INSERT_TAIL(&AllocMemBlocksList, blockToInsert);
+			}
+		}
+		else
+		{
+			struct MemBlock *current_block = head;
+			struct MemBlock *next_block = NULL;
+			LIST_FOREACH (current_block, &AllocMemBlocksList)
+			{
+				next_block = LIST_NEXT(current_block);
+				if (blockToInsert->sva > current_block->sva && blockToInsert->sva < next_block->sva )
+				{
+					LIST_INSERT_AFTER(&AllocMemBlocksList,current_block,blockToInsert);
+					break;
+				}
+			}
+		}
 }
 
 //=========================================

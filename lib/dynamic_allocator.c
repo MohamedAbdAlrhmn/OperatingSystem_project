@@ -221,7 +221,30 @@ struct MemBlock *alloc_block_NF(uint32 size)
 {
 	//TODO: [PROJECT MS1 - BONUS] [DYNAMIC ALLOCATOR] alloc_block_NF
 	// Write your code here, remove the panic and write your code
-	panic("alloc_block_NF() is not implemented yet...!!");
+	//panic("alloc_block_NF() is not implemented yet...!!");
+	struct MemBlock *point;
+			LIST_FOREACH(point,&FreeMemBlocksList)
+			{
+				if(size <= point->size)
+				{
+				   if(size == point->size){
+					   LIST_REMOVE(&FreeMemBlocksList,point);
+					   return  point;
+					   break;
+				   }
+				   else if (size < point->size){
+					   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+					   ReturnedBlock->sva = point->sva;
+					   ReturnedBlock->size = size;
+					   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+					   point->sva += size;
+					   point->size -= size;
+					   return ReturnedBlock;
+					   break;
+				   }
+				}
+			}
+			return NULL;
 
 }
 

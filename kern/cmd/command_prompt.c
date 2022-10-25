@@ -50,7 +50,7 @@ int execute_command(char *command_string)
 	int number_of_arguments;
 	//allocate array of char * of size MAX_ARGUMENTS = 16 found in string.h
 	char *arguments[MAX_ARGUMENTS];
-
+	char *auto_fun[MAX_ARGUMENTS];
 
 	strsplit(command_string, WHITESPACE, arguments, &number_of_arguments) ;
 	if (number_of_arguments == 0)
@@ -59,12 +59,18 @@ int execute_command(char *command_string)
 	// Lookup in the commands array and execute the command
 	int command_found = 0;
 	int i ;
+	int count = 0;
 	for (i = 0; i < NUM_OF_COMMANDS; i++)
 	{
 		if (strcmp(arguments[0], commands[i].name) == 0)
 		{
 			command_found = 1;
 			break;
+		}
+		else if (strncmp(arguments[0], commands[i].name,strlen(arguments[0])) == 0)
+		{
+			auto_fun[count] = commands[i].name;
+			count++;
 		}
 	}
 
@@ -74,10 +80,16 @@ int execute_command(char *command_string)
 		return_value = commands[i].function_to_execute(number_of_arguments, arguments);
 		return return_value;
 	}
-	else
+	else if (count == 0)
 	{
 		//if not found, then it's unknown command
 		cprintf("Unknown command '%s'\n", arguments[0]);
-		return 0;
 	}
+	else
+	{
+		int loop;
+		for(loop = 0; loop < count; loop++)
+			cprintf("%s\n", auto_fun[loop]);
+	}
+	return 0;
 }

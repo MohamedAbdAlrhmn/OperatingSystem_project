@@ -64,10 +64,11 @@ void initialize_MemBlocksList(uint32 numOfBlocks)
 	// Write your code here, remove the panic and write your code
 	//panic("initialize_MemBlocksList() is not implemented yet...!!");
 	LIST_INIT(&AvailableMemBlocksList);
-		for(int y=0;y<numOfBlocks;y++)
-		{
-			LIST_INSERT_HEAD(&AvailableMemBlocksList, &(MemBlockNodes[y]));
-		}
+
+	for(int y=0;y<numOfBlocks;y++)
+	{
+		LIST_INSERT_HEAD(&AvailableMemBlocksList, &(MemBlockNodes[y]));
+	}
 }
 
 //===============================
@@ -79,6 +80,7 @@ struct MemBlock *find_block(struct MemBlock_List *blockList, uint32 va)
 	// Write your code here, remove the panic and write your code
 	//panic("find_block() is not implemented yet...!!");
 	struct MemBlock *point;
+
 	LIST_FOREACH(point,blockList)
 	{
 		if(va==point->sva)
@@ -98,76 +100,38 @@ void insert_sorted_allocList(struct MemBlock *blockToInsert)
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] insert_sorted_allocList
 	// Write your code here, remove the panic and write your code
 	//panic("insert_sorted_allocList() is not implemented yet...!!");
-	/*uint32 result_1;
-		uint32 result_2;
-		uint32 space = blockToInsert->size + blockToInsert->sva;
-		uint32 size = LIST_SIZE(&(AllocMemBlocksList));
-		if (size == 0)
-		{
-			LIST_INSERT_HEAD(&AllocMemBlocksList,blockToInsert);
-		}
-		else
-		{
-			struct MemBlock *element;
-			struct MemBlock *next_element;
-			LIST_FOREACH(element, &AllocMemBlocksList)
-			{
-				result_1 = element->size +element->sva;
-				next_element = LIST_NEXT(element);
-				result_2 = next_element->size + next_element->sva;
-				if (space > result_1 && space < result_2)
-				{
-					element->prev_next_info.le_next = blockToInsert;
-					next_element->prev_next_info.le_prev =blockToInsert;
-					blockToInsert->prev_next_info.le_prev = element;
-					break;
-				}
-				else if (space < result_1)
-				{
-					blockToInsert->prev_next_info.le_next = element;
-					element->prev_next_info.le_prev = blockToInsert;
-					LIST_INSERT_HEAD(&AllocMemBlocksList,blockToInsert);
-					break;
-				}
-				else if (next_element == NULL)
-				{
-					LIST_INSERT_TAIL(&AllocMemBlocksList,blockToInsert);
-					break;
-				}
-			}
-		}*/
-		struct MemBlock *head = LIST_FIRST(&AllocMemBlocksList) ;
-		struct MemBlock *tail = LIST_LAST(&AllocMemBlocksList) ;
+	struct MemBlock *head = LIST_FIRST(&AllocMemBlocksList) ;
+	struct MemBlock *tail = LIST_LAST(&AllocMemBlocksList) ;
 
-		if (head == tail || blockToInsert->sva <= head->sva || blockToInsert->sva >= tail->sva )
+	if (head == tail || blockToInsert->sva <= head->sva || blockToInsert->sva >= tail->sva )
+	{
+		if(head == NULL )
 		{
-			if(head == NULL )
+			LIST_INSERT_HEAD(&AllocMemBlocksList, blockToInsert);
+		}
+		else if (blockToInsert->sva <= head->sva)
+		{
+			LIST_INSERT_BEFORE(&AllocMemBlocksList,head, blockToInsert);
+		}
+		else if (blockToInsert->sva >= tail->sva )
+		{
+			LIST_INSERT_TAIL(&AllocMemBlocksList, blockToInsert);
+		}
+	}
+	else
+	{
+		struct MemBlock *current_block = head;
+		struct MemBlock *next_block = NULL;
+		LIST_FOREACH (current_block, &AllocMemBlocksList)
+		{
+			next_block = LIST_NEXT(current_block);
+			if (blockToInsert->sva > current_block->sva && blockToInsert->sva < next_block->sva)
 			{
-				LIST_INSERT_HEAD(&AllocMemBlocksList, blockToInsert);
-			}
-			else if (blockToInsert->sva <= head->sva)
-			{
-				LIST_INSERT_BEFORE(&AllocMemBlocksList,head, blockToInsert);
-			}
-			else if (blockToInsert->sva >= tail->sva )
-			{
-				LIST_INSERT_TAIL(&AllocMemBlocksList, blockToInsert);
+				LIST_INSERT_AFTER(&AllocMemBlocksList,current_block,blockToInsert);
+				break;
 			}
 		}
-		else
-		{
-			struct MemBlock *current_block = head;
-			struct MemBlock *next_block = NULL;
-			LIST_FOREACH (current_block, &AllocMemBlocksList)
-			{
-				next_block = LIST_NEXT(current_block);
-				if (blockToInsert->sva > current_block->sva && blockToInsert->sva < next_block->sva )
-				{
-					LIST_INSERT_AFTER(&AllocMemBlocksList,current_block,blockToInsert);
-					break;
-				}
-			}
-		}
+	}
 }
 
 //=========================================
@@ -177,30 +141,29 @@ struct MemBlock *alloc_block_FF(uint32 size)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] alloc_block_FF
 	// Write your code here, remove the panic and write your code
-	//panic("alloc_block_FF() is not implemented yet...!!");
 	struct MemBlock *point;
-		LIST_FOREACH(point,&FreeMemBlocksList)
+	LIST_FOREACH(point,&FreeMemBlocksList)
+	{
+		if(size <= point->size)
 		{
-			if(size <= point->size)
-			{
-			   if(size == point->size){
-				   LIST_REMOVE(&FreeMemBlocksList,point);
-				   return  point;
-				   break;
-			   }
-			   else if (size < point->size){
-				   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
-				   ReturnedBlock->sva = point->sva;
-				   ReturnedBlock->size = size;
-				   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
-				   point->sva += size;
-				   point->size -= size;
-				   return ReturnedBlock;
-				   break;
-			   }
-			}
+		   if(size == point->size){
+			   LIST_REMOVE(&FreeMemBlocksList,point);
+			   return  point;
+			   break;
+		   }
+		   else if (size < point->size){
+			   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+			   ReturnedBlock->sva = point->sva;
+			   ReturnedBlock->size = size;
+			   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+			   point->sva += size;
+			   point->size -= size;
+			   return ReturnedBlock;
+			   break;
+		   }
 		}
-		return NULL;
+	}
+	return NULL;
 }
 
 //=========================================
@@ -221,31 +184,29 @@ struct MemBlock *alloc_block_NF(uint32 size)
 {
 	//TODO: [PROJECT MS1 - BONUS] [DYNAMIC ALLOCATOR] alloc_block_NF
 	// Write your code here, remove the panic and write your code
-	//panic("alloc_block_NF() is not implemented yet...!!");
 	struct MemBlock *point;
-			LIST_FOREACH(point,&FreeMemBlocksList)
-			{
-				if(size <= point->size)
-				{
-				   if(size == point->size){
-					   LIST_REMOVE(&FreeMemBlocksList,point);
-					   return  point;
-					   break;
-				   }
-				   else if (size < point->size){
-					   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
-					   ReturnedBlock->sva = point->sva;
-					   ReturnedBlock->size = size;
-					   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
-					   point->sva += size;
-					   point->size -= size;
-					   return ReturnedBlock;
-					   break;
-				   }
-				}
-			}
-			return NULL;
-
+	LIST_FOREACH(point,&FreeMemBlocksList)
+	{
+		if(size <= point->size)
+		{
+		   if(size == point->size){
+			   LIST_REMOVE(&FreeMemBlocksList,point);
+			   return  point;
+			   break;
+		   }
+		   else if (size < point->size){
+			   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+			   ReturnedBlock->sva = point->sva;
+			   ReturnedBlock->size = size;
+			   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+			   point->sva += size;
+			   point->size -= size;
+			   return ReturnedBlock;
+			   break;
+		   }
+		}
+	}
+	return NULL;
 }
 
 //===================================================
@@ -258,12 +219,77 @@ void insert_sorted_with_merge_freeList(struct MemBlock *blockToInsert)
 
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] insert_sorted_with_merge_freeList
 	// Write your code here, remove the panic and write your code
-	panic("insert_sorted_with_merge_freeList() is not implemented yet...!!");
+	struct MemBlock *head = LIST_FIRST(&FreeMemBlocksList) ;
+	struct MemBlock *tail = LIST_LAST(&FreeMemBlocksList) ;
 
-
-
+	if (LIST_EMPTY(&FreeMemBlocksList) || blockToInsert->sva <= head->sva)
+	{
+		LIST_INSERT_HEAD(&FreeMemBlocksList, blockToInsert);
+		if(head != NULL && blockToInsert->sva + blockToInsert->size == head->sva)
+		{
+			blockToInsert->size += head->size;
+			LIST_REMOVE(&FreeMemBlocksList, head);
+			head->size = 0;
+			head->sva = 0;
+			LIST_INSERT_HEAD(&AvailableMemBlocksList, head);
+		}
+	}
+	else if (blockToInsert->sva >= tail->sva)
+	{
+		if(tail->sva + tail->size == blockToInsert->sva)
+		{
+			tail->size += blockToInsert->size;
+			blockToInsert->size = 0;
+			blockToInsert->sva = 0;
+			LIST_INSERT_HEAD(&AvailableMemBlocksList, blockToInsert);
+		}
+		else
+			LIST_INSERT_TAIL(&FreeMemBlocksList, blockToInsert);
+	}
+	else
+	{
+		struct MemBlock *currentBlock;
+		struct MemBlock *nextBlock;
+		LIST_FOREACH(currentBlock, &FreeMemBlocksList)
+		{
+			nextBlock = LIST_NEXT(currentBlock);
+			if(blockToInsert->sva > currentBlock->sva && blockToInsert->sva < nextBlock->sva)
+			{
+				if(currentBlock->sva + currentBlock->size == blockToInsert->sva)
+				{
+					if(blockToInsert->sva + blockToInsert->size == nextBlock->sva)
+					{
+						currentBlock->size += nextBlock->size;
+						LIST_REMOVE(&FreeMemBlocksList, nextBlock);
+						nextBlock->sva = 0;
+						nextBlock->size = 0;
+						LIST_INSERT_HEAD(&AvailableMemBlocksList, nextBlock);
+					}
+					currentBlock->size += blockToInsert->size;
+					blockToInsert->sva = 0;
+					blockToInsert->size = 0;
+					LIST_INSERT_HEAD(&AvailableMemBlocksList, blockToInsert);
+					break;
+				}
+				else if(blockToInsert->sva + blockToInsert->size == nextBlock->sva)
+				{
+					LIST_INSERT_BEFORE(&FreeMemBlocksList, nextBlock, blockToInsert);
+					blockToInsert->size += nextBlock->size;
+					LIST_REMOVE(&FreeMemBlocksList, nextBlock);
+					nextBlock->sva = 0;
+					nextBlock->size = 0;
+					LIST_INSERT_HEAD(&AvailableMemBlocksList, nextBlock);
+					break;
+				}
+				else
+				{
+					LIST_INSERT_AFTER(&FreeMemBlocksList, currentBlock, blockToInsert);
+					break;
+				}
+			}
+		}
+	}
 	//cprintf("\nAFTER INSERT with MERGE:\n=====================\n");
 	//print_mem_block_lists();
-
 }
 

@@ -67,11 +67,7 @@ void initialize_MemBlocksList(uint32 numOfBlocks)
 		for(int y=0;y<numOfBlocks;y++)
 		{
 			LIST_INSERT_HEAD(&AvailableMemBlocksList, &(MemBlockNodes[y]));
-
 		}
-
-
-
 }
 
 //===============================
@@ -81,8 +77,7 @@ struct MemBlock *find_block(struct MemBlock_List *blockList, uint32 va)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] find_block
 	// Write your code here, remove the panic and write your code
-//	panic("find_block() is not implemented yet...!!");
-
+	//panic("find_block() is not implemented yet...!!");
 	struct MemBlock *point;
 	LIST_FOREACH(point,blockList)
 	{
@@ -90,14 +85,9 @@ struct MemBlock *find_block(struct MemBlock_List *blockList, uint32 va)
 		{
 		   return point;
 		   break;
-
 		}
-
-
-
 	}
 	return NULL;
-
 }
 
 //=========================================
@@ -117,7 +107,30 @@ struct MemBlock *alloc_block_FF(uint32 size)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] alloc_block_FF
 	// Write your code here, remove the panic and write your code
-	panic("alloc_block_FF() is not implemented yet...!!");
+	//panic("alloc_block_FF() is not implemented yet...!!");
+	struct MemBlock *point;
+		LIST_FOREACH(point,&FreeMemBlocksList)
+		{
+			if(size <= point->size)
+			{
+			   if(size == point->size){
+				   LIST_REMOVE(&FreeMemBlocksList,point);
+				   return  point;
+				   break;
+			   }
+			   else if (size < point->size){
+				   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+				   ReturnedBlock->sva = point->sva;
+				   ReturnedBlock->size = size;
+				   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+				   point->sva += size;
+				   point->size -= size;
+				   return ReturnedBlock;
+				   break;
+			   }
+			}
+		}
+		return NULL;
 }
 
 //=========================================

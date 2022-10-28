@@ -84,10 +84,7 @@ struct MemBlock *find_block(struct MemBlock_List *blockList, uint32 va)
 	LIST_FOREACH(point,blockList)
 	{
 		if(va==point->sva)
-		{
 		   return point;
-		   break;
-		}
 	}
 	return NULL;
 }
@@ -173,37 +170,125 @@ struct MemBlock *alloc_block_BF(uint32 size)
 {
 	//TODO: [PROJECT MS1] [DYNAMIC ALLOCATOR] alloc_block_BF
 	// Write your code here, remove the panic and write your code
-	panic("alloc_block_BF() is not implemented yet...!!");
+	struct MemBlock *currentMemBlock;
+	uint32 minSize;
+	uint32 svaOfMinSize;
+	bool isFound = 1==0;
+	LIST_FOREACH(currentMemBlock,&FreeMemBlocksList)
+	{
+		if(size <= currentMemBlock->size)
+		{
+		   if(size == currentMemBlock->size)
+		   {
+			   LIST_REMOVE(&FreeMemBlocksList,currentMemBlock);
+			   return currentMemBlock;
+		   }
+		   else if (size < currentMemBlock->size && currentMemBlock->size < minSize)
+		   {
+			   isFound = 1==1;
+			   minSize = currentMemBlock->size;
+			   svaOfMinSize = currentMemBlock->sva;
+		   }
+		}
+	}
+	if(isFound)
+	{
+		struct MemBlock * foundBlock = LIST_FIRST(&AvailableMemBlocksList);
+		foundBlock->sva = svaOfMinSize;
+		foundBlock->size = size;
+		LIST_REMOVE(&AvailableMemBlocksList,foundBlock);
+		struct MemBlock *cMemBlock = find_block(&FreeMemBlocksList, svaOfMinSize);
+		cMemBlock->sva += size;
+		cMemBlock->size -= size;
+		return foundBlock;
+	}
+	return NULL;
 }
 
-
+uint32 svaOfNF = 0;
 //=========================================
 // [7] ALLOCATE BLOCK BY NEXT FIT:
 //=========================================
 struct MemBlock *alloc_block_NF(uint32 size)
 {
 	//TODO: [PROJECT MS1 - BONUS] [DYNAMIC ALLOCATOR] alloc_block_NF
-	// Write your code here, remove the panic and write your code
+	// Write your code here, remove the panic and write your codestruct MemBlock *point;
 	struct MemBlock *point;
-	LIST_FOREACH(point,&FreeMemBlocksList)
+	if(svaOfNF == 0)
 	{
-		if(size <= point->size)
+		LIST_FOREACH(point,&FreeMemBlocksList)
 		{
-		   if(size == point->size){
-			   LIST_REMOVE(&FreeMemBlocksList,point);
-			   return  point;
-			   break;
-		   }
-		   else if (size < point->size){
-			   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
-			   ReturnedBlock->sva = point->sva;
-			   ReturnedBlock->size = size;
-			   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
-			   point->sva += size;
-			   point->size -= size;
-			   return ReturnedBlock;
-			   break;
-		   }
+			if(size <= point->size)
+			{
+			   if(size == point->size){
+				   LIST_REMOVE(&FreeMemBlocksList,point);
+				   svaOfNF = point->sva;
+				   return  point;
+				   break;
+			   }
+			   else if (size < point->size){
+				   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+				   ReturnedBlock->sva = point->sva;
+				   ReturnedBlock->size = size;
+				   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+				   svaOfNF = ReturnedBlock->sva;
+				   point->sva += size;
+				   point->size -= size;
+				   return ReturnedBlock;
+				   break;
+			   }
+			}
+		}
+	}
+	else
+	{
+		LIST_FOREACH(point, &FreeMemBlocksList)
+		{
+			if(point->sva >= svaOfNF)
+			{
+				if(size <= point->size)
+				{
+				   if(size == point->size){
+					   LIST_REMOVE(&FreeMemBlocksList,point);
+					   svaOfNF = point->sva;
+					   return  point;
+				   }
+				   else if (size < point->size){
+					   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+					   ReturnedBlock->sva = point->sva;
+					   ReturnedBlock->size = size;
+					   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+					   svaOfNF = ReturnedBlock->sva;
+					   point->sva += size;
+					   point->size -= size;
+					   return ReturnedBlock;
+				   }
+				}
+			}
+		}
+		LIST_FOREACH(point, &FreeMemBlocksList)
+		{
+			if(point->sva < svaOfNF)
+			{
+				if(size <= point->size)
+				{
+				   if(size == point->size){
+					   LIST_REMOVE(&FreeMemBlocksList,point);
+					   svaOfNF = point->sva;
+					   return  point;
+				   }
+				   else if (size < point->size){
+					   struct MemBlock * ReturnedBlock = LIST_FIRST(&AvailableMemBlocksList);
+					   ReturnedBlock->sva = point->sva;
+					   ReturnedBlock->size = size;
+					   LIST_REMOVE(&AvailableMemBlocksList,ReturnedBlock);
+					   svaOfNF = ReturnedBlock->sva;
+					   point->sva += size;
+					   point->size -= size;
+					   return ReturnedBlock;
+				   }
+				}
+			}
 		}
 	}
 	return NULL;

@@ -18,7 +18,25 @@ inline int pt_get_page_permissions(uint32* page_directory, uint32 virtual_addres
 {
 	//TODO: [PROJECT MS2] [PAGING HELPERS] pt_get_page_permissions
 	// Write your code here, remove the panic and write your code
-	panic("pt_get_page_permissions() is not implemented yet...!!");
+//	panic("pt_get_page_permissions() is not implemented yet...!!");
+
+	uint32* page_table_point=NULL;
+	uint32 entry_of_page_table;
+	uint32 Permissions_of_entry;
+	get_page_table(page_directory,virtual_address,&page_table_point);
+	if(page_table_point!=NULL)
+	{
+		entry_of_page_table=page_table_point[PTX(virtual_address)];
+		Permissions_of_entry=entry_of_page_table&=0x00000FFF;
+
+
+		return Permissions_of_entry;
+	}
+
+	else
+	{
+		return -1;
+	}
 }
 
 inline void pt_clear_page_table_entry(uint32* page_directory, uint32 virtual_address)
@@ -35,7 +53,19 @@ inline int virtual_to_physical(uint32* page_directory, uint32 virtual_address)
 {
 	//TODO: [PROJECT MS2] [PAGING HELPERS] virtual_to_physical
 	// Write your code here, remove the panic and write your code
-	panic("virtual_to_physical() is not implemented yet...!!");
+//	panic("virtual_to_physical() is not implemented yet...!!");
+//	 uint32* page_table_point=NULL;
+//	    uint32* pa=(uint32*)get_frame_info(page_directory,virtual_address,&page_table_point);
+//		if(page_table_point!=NULL)
+//		{
+//			return (uint32)*pa;
+//		}
+//
+//		else
+//		{
+//			return -1;
+//		}
+	return -1;
 }
 
 /***********************************************************************************************/

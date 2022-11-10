@@ -43,7 +43,17 @@ inline void pt_clear_page_table_entry(uint32* page_directory, uint32 virtual_add
 {
 	//TODO: [PROJECT MS2] [PAGING HELPERS] pt_clear_page_table_entry
 	// Write your code here, remove the panic and write your code
-	panic("pt_clear_page_table_entry() is not implemented yet...!!");
+	uint32* page_table_point=NULL;
+	get_page_table(page_directory,virtual_address,&page_table_point);
+	if (page_table_point!=NULL)
+	{
+		memset(page_table_point , 0, PAGE_SIZE);
+		tlb_invalidate((void *)NULL, (void *)virtual_address);
+	}
+	else
+	{
+		panic("Page Table doesn't exist...!");
+	}
 }
 
 /***********************************************************************************************/
@@ -53,18 +63,15 @@ inline int virtual_to_physical(uint32* page_directory, uint32 virtual_address)
 {
 	//TODO: [PROJECT MS2] [PAGING HELPERS] virtual_to_physical
 	// Write your code here, remove the panic and write your code
-//	panic("virtual_to_physical() is not implemented yet...!!");
-//	 uint32* page_table_point=NULL;
-//	    uint32* pa=(uint32*)get_frame_info(page_directory,virtual_address,&page_table_point);
-//		if(page_table_point!=NULL)
-//		{
-//			return (uint32)*pa;
-//		}
-//
-//		else
-//		{
-//			return -1;
-//		}
+	uint32* page_table_point=NULL;
+	get_page_table(page_directory,virtual_address,&page_table_point);
+
+	if(page_table_point != NULL)
+	{
+		uint32 page_table_entry = page_table_point[PTX(virtual_address)];
+		if( page_table_entry != 0)
+			return EXTRACT_ADDRESS (page_table_entry);
+	}
 	return -1;
 }
 

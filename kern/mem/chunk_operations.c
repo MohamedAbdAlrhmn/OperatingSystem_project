@@ -62,7 +62,50 @@ int allocate_chunk(uint32* page_directory, uint32 va, uint32 size, uint32 perms)
 {
 	//TODO: [PROJECT MS2] [CHUNK OPERATIONS] allocate_chunk
 	// Write your code here, remove the panic and write your code
-	panic("allocate_chunk() is not implemented yet...!!");
+//	panic("allocate_chunk() is not implemented yet...!!");
+	uint32 virtual_address=0;
+	uint32 range_page=va+size;
+	uint32 virtual_range=0;
+//	uint32 pageSize=4*1024;
+	struct FrameInfo *sb_chunck= NULL ;
+	uint32 *page_table_point=NULL;
+    uint32 result=0;
+    struct FrameInfo *ptr_frame_info ;
+
+	virtual_address=ROUNDDOWN(va,PAGE_SIZE);
+	virtual_range=ROUNDUP(range_page,PAGE_SIZE);
+	uint32 new_virtual_address;
+	for(uint32 count=virtual_address;count<virtual_range;count+=PAGE_SIZE)
+	{    new_virtual_address=count;
+
+	      get_page_table(page_directory,new_virtual_address,&page_table_point);
+	       if(page_table_point==NULL)
+	       {
+	    	   page_table_point=create_page_table(page_directory,new_virtual_address);
+	       }
+
+	       sb_chunck=get_frame_info(page_directory,new_virtual_address,&page_table_point);
+            if(sb_chunck!=NULL)
+            {
+            	return -1;
+            }
+
+
+		       result= allocate_frame(&sb_chunck);
+
+
+			     if(result != E_NO_MEM)
+			      {
+
+				     result=map_frame(page_directory,sb_chunck,new_virtual_address,perms);
+
+			      }
+
+
+
+	}
+
+	return 0;
 }
 
 /*BONUS*/

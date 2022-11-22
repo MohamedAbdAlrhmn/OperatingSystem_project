@@ -42,6 +42,8 @@ void* kmalloc(unsigned int size)
 	// use "isKHeapPlacementStrategyFIRSTFIT() ..." functions to check the current strategy
 
 	//change this "return" according to your answer
+
+
 }
 
 void kfree(void* virtual_address)
@@ -56,7 +58,17 @@ unsigned int kheap_virtual_address(unsigned int physical_address)
 {
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kheap_virtual_address
 	// Write your code here, remove the panic and write your code
-	panic("kheap_virtual_address() is not implemented yet...!!");
+//	panic("kheap_virtual_address() is not implemented yet...!!");
+
+	struct FrameInfo *convert_to_va=to_frame_info(physical_address);
+		if(physical_address!=E_NO_MEM)
+		{
+		return convert_to_va->va;
+		}
+		else
+		{
+			return 0;
+		}
 
 	//return the virtual address corresponding to given physical_address
 	//refer to the project presentation and documentation for details

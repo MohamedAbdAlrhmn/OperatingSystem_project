@@ -12,23 +12,43 @@
 
 void initialize_dyn_block_system()
 {
-	//TODO: [PROJECT MS2] [KERNEL HEAP] initialize_dyn_block_system
+//TODO: [PROJECT MS2] [KERNEL HEAP] initialize_dyn_block_system
 	// your code is here, remove the panic and write your code
-	kpanic_into_prompt("initialize_dyn_block_system() is not implemented yet...!!");
+	//kpanic_into_prompt("initialize_dyn_block_system() is not implemented yet...!!");
 
-	//[1] Initialize two lists (AllocMemBlocksList & FreeMemBlocksList) [Hint: use LIST_INIT()]
+	//1.Initialize two lists (AllocMemBlocksList & FreeMemBlocksList) [Hint: use LIST_INIT()]
+	LIST_INIT(&AllocMemBlocksList);
+	LIST_INIT(&FreeMemBlocksList);
+	uint32 arr_size;
+
 #if STATIC_MEMBLOCK_ALLOC
 	//DO NOTHING
 #else
-	/*[2] Dynamically allocate the array of MemBlockNodes
-	 * 	remember to:
-	 * 		1. set MAX_MEM_BLOCK_CNT with the chosen size of the array
-	 * 		2. allocation should be aligned on PAGE boundary
-	 * 	HINT: can use alloc_chunk(...) function
-	 */
+	 //Dynamically allocate the array of MemBlockNodes remember to:
+
+	 //2. set MAX_MEM_BLOCK_CNT with the chosen size of the array
+	 MAX_MEM_BLOCK_CNT = (KERNEL_HEAP_MAX-KERNEL_HEAP_START)/PAGE_SIZE;
+
+	 //3. assign starting address of MemBlockNodes array
+	 MemBlockNodes  =(struct MemBlock*) KERNEL_HEAP_START;
+
+	 //4.calculate the total size of memory required for the MemBlockNodes array (size of all the Structs)
+	 arr_size =  ROUNDUP(MAX_MEM_BLOCK_CNT * sizeof(struct MemBlock), PAGE_SIZE);
+
+	 //5. allocate_chunk for this total memory size, with correct startAddress
+	 allocate_chunk(ptr_page_directory, KERNEL_HEAP_START , arr_size , PERM_WRITEABLE | PERM_PRESENT);
+	 //HINT: can use alloc_chunk(...) function
 #endif
-	//[3] Initialize AvailableMemBlocksList by filling it with the MemBlockNodes
-	//[4] Insert a new MemBlock with the remaining heap size into the FreeMemBlocksList
+	//6.Initialize AvailableMemBlocksList by filling it with the MemBlockNodes
+	initialize_MemBlocksList(MAX_MEM_BLOCK_CNT);
+	//7. Take a block from the AvailableMemBlocksList and fill its size with all of the heap size (without size allocated for the array) and think what should the start address be?
+	struct MemBlock * NewBlock = LIST_FIRST(&AvailableMemBlocksList);
+	NewBlock->sva = KERNEL_HEAP_START + arr_size;
+	NewBlock->size = (KERNEL_HEAP_MAX-KERNEL_HEAP_START) - arr_size;
+	LIST_REMOVE(&AvailableMemBlocksList,NewBlock);
+	//8. Insert a new MemBlock with the remaining heap size into the FreeMemBlocksList
+	LIST_INSERT_HEAD(&FreeMemBlocksList, NewBlock);
+
 }
 
 void* kmalloc(unsigned int size)

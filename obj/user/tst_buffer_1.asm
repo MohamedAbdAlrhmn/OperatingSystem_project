@@ -249,7 +249,7 @@ void _main(void)
 		dst[i] = i;
   8002f0:	8b 45 f4             	mov    -0xc(%ebp),%eax
   8002f3:	8b 55 f4             	mov    -0xc(%ebp),%edx
-  8002f6:	89 14 85 20 a2 82 00 	mov    %edx,0x82a220(,%eax,4)
+  8002f6:	89 14 85 20 31 80 00 	mov    %edx,0x803120(,%eax,4)
 		dstSum1 += i;
   8002fd:	8b 45 f4             	mov    -0xc(%ebp),%eax
   800300:	01 45 f0             	add    %eax,-0x10(%ebp)
@@ -318,7 +318,7 @@ void _main(void)
 	{
 		srcSum1 += src[i];
   800395:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  800398:	8b 04 85 60 22 83 00 	mov    0x832260(,%eax,4),%eax
+  800398:	8b 04 85 60 b1 80 00 	mov    0x80b160(,%eax,4),%eax
   80039f:	01 45 e8             	add    %eax,-0x18(%ebp)
 		dummy += sys_calculate_notmod_frames() + myEnv->env_id; //Always use page #: 800000, 801000, 803000
   8003a2:	e8 c3 14 00 00       	call   80186a <sys_calculate_notmod_frames>
@@ -385,7 +385,7 @@ void _main(void)
 	{
 		dstSum2 += dst[i];
   80043b:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  80043e:	8b 04 85 20 a2 82 00 	mov    0x82a220(,%eax,4),%eax
+  80043e:	8b 04 85 20 31 80 00 	mov    0x803120(,%eax,4),%eax
   800445:	01 45 e4             	add    %eax,-0x1c(%ebp)
 		dummy += sys_calculate_notmod_frames() + myEnv->env_id; //Always use page #: 800000, 801000, 803000
   800448:	e8 1d 14 00 00       	call   80186a <sys_calculate_notmod_frames>
@@ -455,7 +455,7 @@ void _main(void)
 	{
 		srcSum2 += src[i];
   8004e6:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  8004e9:	8b 04 85 60 22 83 00 	mov    0x832260(,%eax,4),%eax
+  8004e9:	8b 04 85 60 b1 80 00 	mov    0x80b160(,%eax,4),%eax
   8004f0:	01 45 e0             	add    %eax,-0x20(%ebp)
 		dummy += sys_calculate_notmod_frames() + myEnv->env_id; //Always use page #: 800000, 801000, 803000
   8004f3:	e8 72 13 00 00       	call   80186a <sys_calculate_notmod_frames>
@@ -715,11 +715,11 @@ _panic(const char *file, int line, const char *fmt,...)
   80071a:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  80071d:	a1 74 a2 83 00       	mov    0x83a274,%eax
+  80071d:	a1 74 31 81 00       	mov    0x813174,%eax
   800722:	85 c0                	test   %eax,%eax
   800724:	74 16                	je     80073c <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  800726:	a1 74 a2 83 00       	mov    0x83a274,%eax
+  800726:	a1 74 31 81 00       	mov    0x813174,%eax
   80072b:	83 ec 08             	sub    $0x8,%esp
   80072e:	50                   	push   %eax
   80072f:	68 74 23 80 00       	push   $0x802374

@@ -97,10 +97,10 @@ void _main(void)
 
 	//Reading (Not Modified)
 	char garbage1 = arr[PAGE_SIZE*11-1] ;
-  8000ac:	a0 5f 51 83 00       	mov    0x83515f,%al
+  8000ac:	a0 5f e0 80 00       	mov    0x80e05f,%al
   8000b1:	88 45 d7             	mov    %al,-0x29(%ebp)
 	char garbage2 = arr[PAGE_SIZE*12-1] ;
-  8000b4:	a0 5f 61 83 00       	mov    0x83615f,%al
+  8000b4:	a0 5f f0 80 00       	mov    0x80f05f,%al
   8000b9:	88 45 d6             	mov    %al,-0x2a(%ebp)
 
 	//Writing (Modified)
@@ -111,7 +111,7 @@ void _main(void)
 	{
 		arr[i] = -1 ;
   8000c5:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8000c8:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8000c8:	05 60 30 80 00       	add    $0x803060,%eax
   8000cd:	c6 00 ff             	movb   $0xff,(%eax)
 		/*2016: this BUGGY line is REMOVED el7! it overwrites the KERNEL CODE :( !!!*/
 		//*ptr = *ptr2 ;
@@ -178,7 +178,7 @@ void _main(void)
   800157:	eb 29                	jmp    800182 <_main+0x14a>
 			if( arr[i] != -1) panic("Modified page(s) not restored correctly");
   800159:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  80015c:	05 60 a1 82 00       	add    $0x82a160,%eax
+  80015c:	05 60 30 80 00       	add    $0x803060,%eax
   800161:	8a 00                	mov    (%eax),%al
   800163:	3c ff                	cmp    $0xff,%al
   800165:	74 14                	je     80017b <_main+0x143>
@@ -414,11 +414,11 @@ _panic(const char *file, int line, const char *fmt,...)
   80034a:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  80034d:	a1 58 62 83 00       	mov    0x836258,%eax
+  80034d:	a1 5c f1 80 00       	mov    0x80f15c,%eax
   800352:	85 c0                	test   %eax,%eax
   800354:	74 16                	je     80036c <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  800356:	a1 58 62 83 00       	mov    0x836258,%eax
+  800356:	a1 5c f1 80 00       	mov    0x80f15c,%eax
   80035b:	83 ec 08             	sub    $0x8,%esp
   80035e:	50                   	push   %eax
   80035f:	68 30 1f 80 00       	push   $0x801f30

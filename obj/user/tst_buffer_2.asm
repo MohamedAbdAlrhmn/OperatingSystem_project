@@ -313,7 +313,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   800381:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  800384:	05 60 a1 82 00       	add    $0x82a160,%eax
+  800384:	05 60 30 80 00       	add    $0x803060,%eax
   800389:	c6 00 ff             	movb   $0xff,(%eax)
 	initModBufCnt = sys_calculate_modified_frames();
 	int initFreeBufCnt = sys_calculate_notmod_frames();
@@ -343,7 +343,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   8003b2:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8003b5:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8003b5:	05 60 30 80 00       	add    $0x803060,%eax
   8003ba:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -373,7 +373,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   8003e6:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8003e9:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8003e9:	05 60 30 80 00       	add    $0x803060,%eax
   8003ee:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -403,7 +403,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   80041a:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  80041d:	05 60 a1 82 00       	add    $0x82a160,%eax
+  80041d:	05 60 30 80 00       	add    $0x803060,%eax
   800422:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -433,7 +433,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   80044e:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  800451:	05 60 a1 82 00       	add    $0x82a160,%eax
+  800451:	05 60 30 80 00       	add    $0x803060,%eax
   800456:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -463,7 +463,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   800482:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  800485:	05 60 a1 82 00       	add    $0x82a160,%eax
+  800485:	05 60 30 80 00       	add    $0x803060,%eax
   80048a:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -493,7 +493,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   8004b6:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8004b9:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8004b9:	05 60 30 80 00       	add    $0x803060,%eax
   8004be:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -523,7 +523,7 @@ void _main(void)
 	{
 		arr[i] = -1;
   8004ea:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8004ed:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8004ed:	05 60 30 80 00       	add    $0x803060,%eax
   8004f2:	c6 00 ff             	movb   $0xff,(%eax)
 	}
 	dummy = sys_calculate_notmod_frames() + myEnv->env_id;	//Always use page #: 800000, 801000, 803000
@@ -608,7 +608,7 @@ void _main(void)
 	{
 		s += arr[i] ;
   8005a4:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8005a7:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8005a7:	05 60 30 80 00       	add    $0x803060,%eax
   8005ac:	8a 00                	mov    (%eax),%al
   8005ae:	0f be c0             	movsbl %al,%eax
   8005b1:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -640,7 +640,7 @@ void _main(void)
 	{
 		s += arr[i] ;
   8005dd:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8005e0:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8005e0:	05 60 30 80 00       	add    $0x803060,%eax
   8005e5:	8a 00                	mov    (%eax),%al
   8005e7:	0f be c0             	movsbl %al,%eax
   8005ea:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -672,7 +672,7 @@ void _main(void)
 	{
 		s += arr[i] ;
   800616:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  800619:	05 60 a1 82 00       	add    $0x82a160,%eax
+  800619:	05 60 30 80 00       	add    $0x803060,%eax
   80061e:	8a 00                	mov    (%eax),%al
   800620:	0f be c0             	movsbl %al,%eax
   800623:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -745,7 +745,7 @@ void _main(void)
   8006b3:	eb 13                	jmp    8006c8 <_main+0x690>
 		s += arr[i] ;
   8006b5:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8006b8:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8006b8:	05 60 30 80 00       	add    $0x803060,%eax
   8006bd:	8a 00                	mov    (%eax),%al
   8006bf:	0f be c0             	movsbl %al,%eax
   8006c2:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -775,7 +775,7 @@ void _main(void)
   8006ec:	eb 13                	jmp    800701 <_main+0x6c9>
 		s += arr[i] ;
   8006ee:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  8006f1:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8006f1:	05 60 30 80 00       	add    $0x803060,%eax
   8006f6:	8a 00                	mov    (%eax),%al
   8006f8:	0f be c0             	movsbl %al,%eax
   8006fb:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -805,7 +805,7 @@ void _main(void)
   800725:	eb 13                	jmp    80073a <_main+0x702>
 		s += arr[i] ;
   800727:	8b 45 e4             	mov    -0x1c(%ebp),%eax
-  80072a:	05 60 a1 82 00       	add    $0x82a160,%eax
+  80072a:	05 60 30 80 00       	add    $0x803060,%eax
   80072f:	8a 00                	mov    (%eax),%al
   800731:	0f be c0             	movsbl %al,%eax
   800734:	01 45 e0             	add    %eax,-0x20(%ebp)
@@ -867,7 +867,7 @@ void _main(void)
 		}
 
 		if( arr[0] != -1) 						{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  8007b5:	a0 60 a1 82 00       	mov    0x82a160,%al
+  8007b5:	a0 60 30 80 00       	mov    0x803060,%al
   8007ba:	3c ff                	cmp    $0xff,%al
   8007bc:	74 25                	je     8007e3 <_main+0x7ab>
   8007be:	83 ec 0c             	sub    $0xc,%esp
@@ -880,7 +880,7 @@ void _main(void)
   8007d9:	68 a8 24 80 00       	push   $0x8024a8
   8007de:	e8 c8 02 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 1] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  8007e3:	a0 60 a1 c2 00       	mov    0xc2a160,%al
+  8007e3:	a0 60 30 c0 00       	mov    0xc03060,%al
   8007e8:	3c ff                	cmp    $0xff,%al
   8007ea:	74 25                	je     800811 <_main+0x7d9>
   8007ec:	83 ec 0c             	sub    $0xc,%esp
@@ -893,7 +893,7 @@ void _main(void)
   800807:	68 a8 24 80 00       	push   $0x8024a8
   80080c:	e8 9a 02 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 2] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  800811:	a0 60 a1 02 01       	mov    0x102a160,%al
+  800811:	a0 60 30 00 01       	mov    0x1003060,%al
   800816:	3c ff                	cmp    $0xff,%al
   800818:	74 25                	je     80083f <_main+0x807>
   80081a:	83 ec 0c             	sub    $0xc,%esp
@@ -906,7 +906,7 @@ void _main(void)
   800835:	68 a8 24 80 00       	push   $0x8024a8
   80083a:	e8 6c 02 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 3] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  80083f:	a0 60 a1 42 01       	mov    0x142a160,%al
+  80083f:	a0 60 30 40 01       	mov    0x1403060,%al
   800844:	3c ff                	cmp    $0xff,%al
   800846:	74 25                	je     80086d <_main+0x835>
   800848:	83 ec 0c             	sub    $0xc,%esp
@@ -919,7 +919,7 @@ void _main(void)
   800863:	68 a8 24 80 00       	push   $0x8024a8
   800868:	e8 3e 02 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 4] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  80086d:	a0 60 a1 82 01       	mov    0x182a160,%al
+  80086d:	a0 60 30 80 01       	mov    0x1803060,%al
   800872:	3c ff                	cmp    $0xff,%al
   800874:	74 25                	je     80089b <_main+0x863>
   800876:	83 ec 0c             	sub    $0xc,%esp
@@ -932,7 +932,7 @@ void _main(void)
   800891:	68 a8 24 80 00       	push   $0x8024a8
   800896:	e8 10 02 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 5] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  80089b:	a0 60 a1 c2 01       	mov    0x1c2a160,%al
+  80089b:	a0 60 30 c0 01       	mov    0x1c03060,%al
   8008a0:	3c ff                	cmp    $0xff,%al
   8008a2:	74 25                	je     8008c9 <_main+0x891>
   8008a4:	83 ec 0c             	sub    $0xc,%esp
@@ -945,7 +945,7 @@ void _main(void)
   8008bf:	68 a8 24 80 00       	push   $0x8024a8
   8008c4:	e8 e2 01 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 6] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  8008c9:	a0 60 a1 02 02       	mov    0x202a160,%al
+  8008c9:	a0 60 30 00 02       	mov    0x2003060,%al
   8008ce:	3c ff                	cmp    $0xff,%al
   8008d0:	74 25                	je     8008f7 <_main+0x8bf>
   8008d2:	83 ec 0c             	sub    $0xc,%esp
@@ -958,7 +958,7 @@ void _main(void)
   8008ed:	68 a8 24 80 00       	push   $0x8024a8
   8008f2:	e8 b4 01 00 00       	call   800aab <_panic>
 		if( arr[PAGE_SIZE * 1024 * 7] != -1) 	{sys_destroy_env(envIdSlave);panic("modified page not updated on page file OR not reclaimed correctly");}
-  8008f7:	a0 60 a1 42 02       	mov    0x242a160,%al
+  8008f7:	a0 60 30 40 02       	mov    0x2403060,%al
   8008fc:	3c ff                	cmp    $0xff,%al
   8008fe:	74 25                	je     800925 <_main+0x8ed>
   800900:	83 ec 0c             	sub    $0xc,%esp
@@ -1169,11 +1169,11 @@ _panic(const char *file, int line, const char *fmt,...)
   800ab7:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  800aba:	a1 58 b2 02 04       	mov    0x402b258,%eax
+  800aba:	a1 5c 41 00 04       	mov    0x400415c,%eax
   800abf:	85 c0                	test   %eax,%eax
   800ac1:	74 16                	je     800ad9 <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  800ac3:	a1 58 b2 02 04       	mov    0x402b258,%eax
+  800ac3:	a1 5c 41 00 04       	mov    0x400415c,%eax
   800ac8:	83 ec 08             	sub    $0x8,%esp
   800acb:	50                   	push   %eax
   800acc:	68 24 29 80 00       	push   $0x802924

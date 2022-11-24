@@ -25,7 +25,44 @@ int cut_paste_pages(uint32* page_directory, uint32 source_va, uint32 dest_va, ui
 {
 	//TODO: [PROJECT MS2] [CHUNK OPERATIONS] cut_paste_pages
 	// Write your code here, remove the panic and write your code
-	panic("cut_paste_pages() is not implemented yet...!!");
+	uint32 new_dest_va = dest_va;
+	uint32 new_source_va = source_va;
+
+	if(dest_va%PAGE_SIZE!=0)
+		new_dest_va = ROUNDDOWN(dest_va,PAGE_SIZE);
+
+	if(source_va%PAGE_SIZE!=0)
+		new_source_va = ROUNDDOWN(source_va,PAGE_SIZE);
+	uint32 max_size = (PAGE_SIZE * num_of_pages) + new_dest_va;
+
+	for(uint32 i = new_dest_va; i < max_size; i += PAGE_SIZE)
+	{
+		uint32 *ptr_page_table_dest = NULL;
+		get_page_table(page_directory,i,&ptr_page_table_dest);
+		struct FrameInfo *dest_frame = get_frame_info(page_directory,i,&ptr_page_table_dest);
+
+		if(dest_frame!=NULL)
+			return -1;
+	}
+	for(uint32 i = new_dest_va; i < max_size; i += PAGE_SIZE)
+	{
+		uint32 *ptr_page_table_dest = NULL;
+		get_page_table(page_directory,i,&ptr_page_table_dest);
+
+		if(ptr_page_table_dest == NULL)
+			ptr_page_table_dest = create_page_table(page_directory,i);
+
+		struct FrameInfo *dest_frame = get_frame_info(page_directory,i,&ptr_page_table_dest);
+
+		int source_perm = pt_get_page_permissions(page_directory,new_source_va);
+
+		unmap_frame(page_directory,new_source_va);
+		uint32 ret = allocate_frame(&dest_frame);
+		map_frame(page_directory, dest_frame, i,source_perm);
+
+		new_source_va += PAGE_SIZE;
+	}
+	return 0;
 }
 
 //===============================
@@ -62,49 +99,35 @@ int allocate_chunk(uint32* page_directory, uint32 va, uint32 size, uint32 perms)
 {
 	//TODO: [PROJECT MS2] [CHUNK OPERATIONS] allocate_chunk
 	// Write your code here, remove the panic and write your code
-//	panic("allocate_chunk() is not implemented yet...!!");
 	uint32 virtual_address=0;
 	uint32 range_page=va+size;
 	uint32 virtual_range=0;
-//	uint32 pageSize=4*1024;
 	struct FrameInfo *sb_chunck= NULL ;
 	uint32 *page_table_point=NULL;
     uint32 result=0;
-    struct FrameInfo *ptr_frame_info ;
 
 	virtual_address=ROUNDDOWN(va,PAGE_SIZE);
 	virtual_range=ROUNDUP(range_page,PAGE_SIZE);
 	uint32 new_virtual_address;
 	for(uint32 count=virtual_address;count<virtual_range;count+=PAGE_SIZE)
-	{    new_virtual_address=count;
-
-	      get_page_table(page_directory,new_virtual_address,&page_table_point);
-	       if(page_table_point==NULL)
-	       {
-	    	   page_table_point=create_page_table(page_directory,new_virtual_address);
-	       }
-
-	       sb_chunck=get_frame_info(page_directory,new_virtual_address,&page_table_point);
-            if(sb_chunck!=NULL)
-            {
-            	return -1;
-            }
-
-
-		       result= allocate_frame(&sb_chunck);
-
-
-			     if(result != E_NO_MEM)
-			      {
-
-				     result=map_frame(page_directory,sb_chunck,new_virtual_address,perms);
-
-			      }
-
-
-
+	{
+		new_virtual_address=count;
+		get_page_table(page_directory,new_virtual_address,&page_table_point);
+		if(page_table_point==NULL)
+		{
+		   page_table_point=create_page_table(page_directory,new_virtual_address);
+		}
+	    sb_chunck=get_frame_info(page_directory,new_virtual_address,&page_table_point);
+		if(sb_chunck!=NULL)
+		{
+			return -1;
+		}
+	    result= allocate_frame(&sb_chunck);
+		if(result != E_NO_MEM)
+		{
+			result=map_frame(page_directory,sb_chunck,new_virtual_address,perms);
+		}
 	}
-
 	return 0;
 }
 

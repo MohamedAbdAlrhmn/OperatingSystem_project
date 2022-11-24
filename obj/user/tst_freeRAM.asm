@@ -401,13 +401,13 @@ void _main(void)
 
 		//Reading (Not Modified)
 		char garbage1 = arr[PAGE_SIZE*10-1] ;
-  800481:	a0 5f 51 83 00       	mov    0x83515f,%al
+  800481:	a0 5f e0 80 00       	mov    0x80e05f,%al
   800486:	88 85 73 ff ff ff    	mov    %al,-0x8d(%ebp)
 		char garbage2 = arr[PAGE_SIZE*11-1] ;
-  80048c:	a0 5f 61 83 00       	mov    0x83615f,%al
+  80048c:	a0 5f f0 80 00       	mov    0x80f05f,%al
   800491:	88 85 72 ff ff ff    	mov    %al,-0x8e(%ebp)
 		char garbage3 = arr[PAGE_SIZE*12-1] ;
-  800497:	a0 5f 71 83 00       	mov    0x83715f,%al
+  800497:	a0 5f 00 81 00       	mov    0x81005f,%al
   80049c:	88 85 71 ff ff ff    	mov    %al,-0x8f(%ebp)
 
 		char garbage4, garbage5 ;
@@ -419,7 +419,7 @@ void _main(void)
 		{
 			arr[i] = -1 ;
   8004ab:	8b 45 d4             	mov    -0x2c(%ebp),%eax
-  8004ae:	05 60 b1 82 00       	add    $0x82b160,%eax
+  8004ae:	05 60 40 80 00       	add    $0x804060,%eax
   8004b3:	c6 00 ff             	movb   $0xff,(%eax)
 			//always use pages at 0x801000 and 0x804000
 			garbage4 = *ptr ;
@@ -453,7 +453,7 @@ void _main(void)
 			int i = 0;
   8004ea:	c7 45 d0 00 00 00 00 	movl   $0x0,-0x30(%ebp)
 			numOfExistPages = 0;
-  8004f1:	c7 05 20 72 83 00 00 	movl   $0x0,0x837220
+  8004f1:	c7 05 20 01 81 00 00 	movl   $0x0,0x810120
   8004f8:	00 00 00 
 			for (i = 0; i < myEnv->page_WS_max_size; ++i)
   8004fb:	c7 45 d0 00 00 00 00 	movl   $0x0,-0x30(%ebp)
@@ -473,9 +473,9 @@ void _main(void)
   800522:	75 41                	jne    800565 <_main+0x52d>
 				{
 					WSEntries_before[numOfExistPages++] = ROUNDDOWN(myEnv->__uptr_pws[i].virtual_address, PAGE_SIZE);
-  800524:	8b 15 20 72 83 00    	mov    0x837220,%edx
+  800524:	8b 15 20 01 81 00    	mov    0x810120,%edx
   80052a:	8d 42 01             	lea    0x1(%edx),%eax
-  80052d:	a3 20 72 83 00       	mov    %eax,0x837220
+  80052d:	a3 20 01 81 00       	mov    %eax,0x810120
   800532:	a1 20 40 80 00       	mov    0x804020,%eax
   800537:	8b 98 58 da 01 00    	mov    0x1da58(%eax),%ebx
   80053d:	8b 4d d0             	mov    -0x30(%ebp),%ecx
@@ -488,7 +488,7 @@ void _main(void)
   80054d:	89 85 44 ff ff ff    	mov    %eax,-0xbc(%ebp)
   800553:	8b 85 44 ff ff ff    	mov    -0xbc(%ebp),%eax
   800559:	25 00 f0 ff ff       	and    $0xfffff000,%eax
-  80055e:	89 04 95 60 72 83 00 	mov    %eax,0x837260(,%edx,4)
+  80055e:	89 04 95 60 01 81 00 	mov    %eax,0x810160(,%edx,4)
 		//CASE3: free BOTH exited env's and WS
 		if (testCase == 1 || testCase == 3)
 		{
@@ -714,14 +714,14 @@ void _main(void)
 		{
 			//Add the last reference to our WS
 			WSEntries_before[numOfExistPages++] = ROUNDDOWN((uint32)(ptr3), PAGE_SIZE);
-  80085e:	a1 20 72 83 00       	mov    0x837220,%eax
+  80085e:	a1 20 01 81 00       	mov    0x810120,%eax
   800863:	8d 50 01             	lea    0x1(%eax),%edx
-  800866:	89 15 20 72 83 00    	mov    %edx,0x837220
+  800866:	89 15 20 01 81 00    	mov    %edx,0x810120
   80086c:	8b 15 08 40 80 00    	mov    0x804008,%edx
   800872:	89 95 3c ff ff ff    	mov    %edx,-0xc4(%ebp)
   800878:	8b 95 3c ff ff ff    	mov    -0xc4(%ebp),%edx
   80087e:	81 e2 00 f0 ff ff    	and    $0xfffff000,%edx
-  800884:	89 14 85 60 72 83 00 	mov    %edx,0x837260(,%eax,4)
+  800884:	89 14 85 60 01 81 00 	mov    %edx,0x810160(,%eax,4)
 
 			//Make sure that WS is not affected
 			for (i = 0; i < numOfExistPages; ++i)
@@ -730,7 +730,7 @@ void _main(void)
 			{
 				if (WSEntries_before[i] != ROUNDDOWN(myEnv->__uptr_pws[i].virtual_address, PAGE_SIZE))
   800894:	8b 45 d4             	mov    -0x2c(%ebp),%eax
-  800897:	8b 0c 85 60 72 83 00 	mov    0x837260(,%eax,4),%ecx
+  800897:	8b 0c 85 60 01 81 00 	mov    0x810160(,%eax,4),%ecx
   80089e:	a1 20 40 80 00       	mov    0x804020,%eax
   8008a3:	8b 98 58 da 01 00    	mov    0x1da58(%eax),%ebx
   8008a9:	8b 55 d4             	mov    -0x2c(%ebp),%edx
@@ -758,7 +758,7 @@ void _main(void)
 			//Make sure that WS is not affected
 			for (i = 0; i < numOfExistPages; ++i)
   8008e5:	ff 45 d4             	incl   -0x2c(%ebp)
-  8008e8:	a1 20 72 83 00       	mov    0x837220,%eax
+  8008e8:	a1 20 01 81 00       	mov    0x810120,%eax
   8008ed:	39 45 d4             	cmp    %eax,-0x2c(%ebp)
   8008f0:	7c a2                	jl     800894 <_main+0x85c>
 		garbage4 = *ptr ;
@@ -1584,7 +1584,7 @@ void _main(void)
 			//cprintf("i = %x, address = %x, arr[i] = %d\n", i, &(arr[i]), arr[i]);
 			if (arr[i] != -1) panic("test failed!");
   801330:	8b 45 d4             	mov    -0x2c(%ebp),%eax
-  801333:	05 60 b1 82 00       	add    $0x82b160,%eax
+  801333:	05 60 40 80 00       	add    $0x804060,%eax
   801338:	8a 00                	mov    (%eax),%al
   80133a:	3c ff                	cmp    $0xff,%al
   80133c:	74 17                	je     801355 <_main+0x131d>
@@ -1609,7 +1609,7 @@ void _main(void)
 		if (*ptr3 != arr[PAGE_SIZE*10-1]) panic("test failed!");
   801365:	a1 08 40 80 00       	mov    0x804008,%eax
   80136a:	8a 10                	mov    (%eax),%dl
-  80136c:	a0 5f 51 83 00       	mov    0x83515f,%al
+  80136c:	a0 5f e0 80 00       	mov    0x80e05f,%al
   801371:	38 c2                	cmp    %al,%dl
   801373:	74 17                	je     80138c <_main+0x1354>
   801375:	83 ec 04             	sub    $0x4,%esp
@@ -1648,7 +1648,7 @@ void _main(void)
 			if (*ptr4 != arr[PAGE_SIZE*11-1]) panic("test failed!");
   8013dc:	a1 0c 40 80 00       	mov    0x80400c,%eax
   8013e1:	8a 10                	mov    (%eax),%dl
-  8013e3:	a0 5f 61 83 00       	mov    0x83615f,%al
+  8013e3:	a0 5f f0 80 00       	mov    0x80f05f,%al
   8013e8:	38 c2                	cmp    %al,%dl
   8013ea:	74 17                	je     801403 <_main+0x13cb>
   8013ec:	83 ec 04             	sub    $0x4,%esp
@@ -1893,11 +1893,11 @@ _panic(const char *file, int line, const char *fmt,...)
   801616:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  801619:	a1 14 82 83 00       	mov    0x838214,%eax
+  801619:	a1 14 11 81 00       	mov    0x811114,%eax
   80161e:	85 c0                	test   %eax,%eax
   801620:	74 16                	je     801638 <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  801622:	a1 14 82 83 00       	mov    0x838214,%eax
+  801622:	a1 14 11 81 00       	mov    0x811114,%eax
   801627:	83 ec 08             	sub    $0x8,%esp
   80162a:	50                   	push   %eax
   80162b:	68 54 35 80 00       	push   $0x803554

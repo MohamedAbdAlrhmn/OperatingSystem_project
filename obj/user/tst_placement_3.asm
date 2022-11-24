@@ -566,11 +566,11 @@ _panic(const char *file, int line, const char *fmt,...)
   80053d:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  800540:	a1 58 a2 82 00       	mov    0x82a258,%eax
+  800540:	a1 5c 31 80 00       	mov    0x80315c,%eax
   800545:	85 c0                	test   %eax,%eax
   800547:	74 16                	je     80055f <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  800549:	a1 58 a2 82 00       	mov    0x82a258,%eax
+  800549:	a1 5c 31 80 00       	mov    0x80315c,%eax
   80054e:	83 ec 08             	sub    $0x8,%esp
   800551:	50                   	push   %eax
   800552:	68 90 21 80 00       	push   $0x802190

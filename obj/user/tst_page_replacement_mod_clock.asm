@@ -226,10 +226,10 @@ void _main(void)
 
 	//Reading (Not Modified)
 	char garbage1 = arr[PAGE_SIZE*11-1] ;
-  8002ba:	a0 5f 51 83 00       	mov    0x83515f,%al
+  8002ba:	a0 5f e0 80 00       	mov    0x80e05f,%al
   8002bf:	88 45 c7             	mov    %al,-0x39(%ebp)
 	char garbage2 = arr[PAGE_SIZE*12-1] ;
-  8002c2:	a0 5f 61 83 00       	mov    0x83615f,%al
+  8002c2:	a0 5f f0 80 00       	mov    0x80f05f,%al
   8002c7:	88 45 c6             	mov    %al,-0x3a(%ebp)
 
 	//Writing (Modified)
@@ -240,7 +240,7 @@ void _main(void)
 	{
 		arr[i] = -1 ;
   8002d3:	8b 45 f4             	mov    -0xc(%ebp),%eax
-  8002d6:	05 60 a1 82 00       	add    $0x82a160,%eax
+  8002d6:	05 60 30 80 00       	add    $0x803060,%eax
   8002db:	c6 00 ff             	movb   $0xff,(%eax)
 		/*2016: this BUGGY line is REMOVED el7! it overwrites the KERNEL CODE :( !!!*/
 		//*ptr = *ptr2 ;
@@ -634,11 +634,11 @@ _panic(const char *file, int line, const char *fmt,...)
   8006fe:	89 45 f4             	mov    %eax,-0xc(%ebp)
 	// Print the panic message
 	if (argv0)
-  800701:	a1 58 62 83 00       	mov    0x836258,%eax
+  800701:	a1 5c f1 80 00       	mov    0x80f15c,%eax
   800706:	85 c0                	test   %eax,%eax
   800708:	74 16                	je     800720 <_panic+0x2e>
 		cprintf("%s: ", argv0);
-  80070a:	a1 58 62 83 00       	mov    0x836258,%eax
+  80070a:	a1 5c f1 80 00       	mov    0x80f15c,%eax
   80070f:	83 ec 08             	sub    $0x8,%esp
   800712:	50                   	push   %eax
   800713:	68 20 22 80 00       	push   $0x802220

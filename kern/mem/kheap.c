@@ -19,7 +19,7 @@ void initialize_dyn_block_system()
 	//1.Initialize two lists (AllocMemBlocksList & FreeMemBlocksList) [Hint: use LIST_INIT()]
 	LIST_INIT(&AllocMemBlocksList);
 	LIST_INIT(&FreeMemBlocksList);
-	uint32 arr_size;
+	uint32 arr_size = 0;
 
 #if STATIC_MEMBLOCK_ALLOC
 	//DO NOTHING
@@ -60,7 +60,6 @@ void* kmalloc(unsigned int size)
 	//NOTE: All kernel heap allocations are multiples of PAGE_SIZE (4KB)
 	//refer to the project presentation and documentation for details
 	// use "isKHeapPlacementStrategyFIRSTFIT() ..." functions to check the current strategy
-
 	//change this "return" according to your answer
 
 

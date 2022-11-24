@@ -55,22 +55,51 @@ void* kmalloc(unsigned int size)
 {
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kmalloc
 	// your code is here, remove the panic and write your code
-	kpanic_into_prompt("kmalloc() is not implemented yet...!!");
+	//kpanic_into_prompt("kmalloc() is not implemented yet...!!");
+	uint32 allocate_size=ROUNDUP(size,PAGE_SIZE);
+		struct MemBlock * mem_block;
 
-	//NOTE: All kernel heap allocations are multiples of PAGE_SIZE (4KB)
-	//refer to the project presentation and documentation for details
-	// use "isKHeapPlacementStrategyFIRSTFIT() ..." functions to check the current strategy
-	//change this "return" according to your answer
+		if(isKHeapPlacementStrategyFIRSTFIT())
+			mem_block = alloc_block_FF(allocate_size);
+		else if (isKHeapPlacementStrategyBESTFIT())
+			mem_block = alloc_block_BF(allocate_size);
+		else
+			mem_block = alloc_block_NF(allocate_size);
 
-
-}
-
+		if (mem_block != NULL )
+		{
+			//arr = mem_block;
+			int result = allocate_chunk(ptr_page_directory,mem_block->sva,allocate_size,PERM_WRITEABLE| PERM_PRESENT);
+			if (result == 0)
+			{
+				LIST_INSERT_HEAD(&AllocMemBlocksList, mem_block);
+				return (uint32 *) mem_block->sva;
+			}
+			else
+				return 	NULL;
+		}
+		//return NULL;
+	//end
+		return NULL;
+	}
 void kfree(void* virtual_address)
 {
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kfree
 	// Write your code here, remove the panic and write your code
-	panic("kfree() is not implemented yet...!!");
-
+	//panic("kfree() is not implemented yet...!!");
+	/*int count=-1;
+	uint32 va=(uint32)virtual_address;
+	for(int i=0;i<indx;i++)
+	{
+		count++;
+		if((uint32)virtual_address==information[i].Address)
+			  break;
+	}
+	for(int i=0;i<information[count].frames_number;i++)
+	{
+		unmap_frame(ptr_page_directory,(void *)va);
+		va+=(4*1024);
+	}*/
 }
 
 unsigned int kheap_virtual_address(unsigned int physical_address)
@@ -80,15 +109,10 @@ unsigned int kheap_virtual_address(unsigned int physical_address)
 //	panic("kheap_virtual_address() is not implemented yet...!!");
 
 	struct FrameInfo *convert_to_va=to_frame_info(physical_address);
-		if(physical_address!=E_NO_MEM)
-		{
+	//if(physical_address!=E_NO_MEM)
 		return convert_to_va->va;
-		}
-		else
-		{
-			return 0;
-		}
-
+	//else
+		//return 0;
 	//return the virtual address corresponding to given physical_address
 	//refer to the project presentation and documentation for details
 	//EFFICIENT IMPLEMENTATION ~O(1) IS REQUIRED ==================
@@ -98,7 +122,18 @@ unsigned int kheap_physical_address(unsigned int virtual_address)
 {
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kheap_physical_address
 	// Write your code here, remove the panic and write your code
-	panic("kheap_physical_address() is not implemented yet...!!");
+	//panic("kheap_physical_address() is not implemented yet...!!");
+	uint32 *convert_to_pa=NULL;
+	    struct FrameInfo *frame_information=get_frame_info(ptr_page_directory,virtual_address,&convert_to_pa);
+	    uint32 address_physical=to_physical_address(frame_information);
+	    if(frame_information!=NULL)
+	    {
+	        return address_physical ;
+	    }
+	    else
+	    {
+	        return 0;
+	    }
 
 	//return the physical address corresponding to given virtual_address
 	//refer to the project presentation and documentation for details

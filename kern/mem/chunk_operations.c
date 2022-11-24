@@ -75,7 +75,42 @@ int copy_paste_chunk(uint32* page_directory, uint32 source_va, uint32 dest_va, u
 {
 	//TODO: [PROJECT MS2] [CHUNK OPERATIONS] copy_paste_chunk
 	// Write your code here, remove the panic and write your code
-	panic("copy_paste_chunk() is not implemented yet...!!");
+	//panic("copy_paste_chunk() is not implemented yet...!!");
+	uint32 *page_table=NULL;
+	uint32 new_dest_va = dest_va;
+	uint32 new_source_va = source_va;
+	for(uint32 i=dest_va;i<dest_va+size ;i+=PAGE_SIZE)
+	{
+	   get_page_table(page_directory,i,&page_table);
+	   if(page_table==NULL)
+		   page_table=create_page_table(page_directory,i);
+
+	   struct FrameInfo *frame_info=get_frame_info(page_directory,i,&page_table);
+	   uint32 perm =pt_get_page_permissions(page_directory,i);
+
+	   if((frame_info != NULL) && (( perm & PERM_WRITEABLE) !=PERM_WRITEABLE))
+			return -1;
+	   else
+	   {
+		   if(frame_info == NULL)
+		   {
+			   uint32 perms =pt_get_page_permissions(page_directory,new_source_va);
+			   uint32 user_perm = (perms & PERM_USER)|PERM_WRITEABLE;
+			   allocate_frame(&frame_info);
+			   map_frame(page_directory,frame_info,i,user_perm);
+		   }
+	   }
+	   new_source_va += PAGE_SIZE;
+	}
+	uint32 *frame = (uint32*)dest_va;
+    uint32 *page = (uint32*)source_va;
+    for (uint32 i = source_va; i < source_va+size ;i+=4)
+    {
+	    *frame= *page;
+	    frame++;
+	    page++;
+    }
+	return 0;
 }
 
 //===============================

@@ -57,49 +57,46 @@ void* kmalloc(unsigned int size)
 	// your code is here, remove the panic and write your code
 	//kpanic_into_prompt("kmalloc() is not implemented yet...!!");
 	uint32 allocate_size=ROUNDUP(size,PAGE_SIZE);
-		struct MemBlock * mem_block;
+	struct MemBlock * mem_block;
 
-		if(isKHeapPlacementStrategyFIRSTFIT())
-			mem_block = alloc_block_FF(allocate_size);
-		else if (isKHeapPlacementStrategyBESTFIT())
-			mem_block = alloc_block_BF(allocate_size);
-		else
-			mem_block = alloc_block_NF(allocate_size);
+	if(isKHeapPlacementStrategyFIRSTFIT())
+		mem_block = alloc_block_FF(allocate_size);
+	else if (isKHeapPlacementStrategyBESTFIT())
+		mem_block = alloc_block_BF(allocate_size);
+	else
+		mem_block = alloc_block_NF(allocate_size);
 
-		if (mem_block != NULL )
+	if (mem_block != NULL )
+	{
+		int result = allocate_chunk(ptr_page_directory,mem_block->sva,allocate_size,PERM_WRITEABLE| PERM_PRESENT);
+		if (result == 0)
 		{
-			//arr = mem_block;
-			int result = allocate_chunk(ptr_page_directory,mem_block->sva,allocate_size,PERM_WRITEABLE| PERM_PRESENT);
-			if (result == 0)
-			{
-				LIST_INSERT_HEAD(&AllocMemBlocksList, mem_block);
-				return (uint32 *) mem_block->sva;
-			}
-			else
-				return 	NULL;
+			//LIST_INSERT_HEAD(&AllocMemBlocksList, mem_block);
+			insert_sorted_allocList(mem_block);
+			return (uint32 *) mem_block->sva;
 		}
-		//return NULL;
-	//end
-		return NULL;
+		else
+			return 	NULL;
 	}
+	return NULL;
+}
 void kfree(void* virtual_address)
 {
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kfree
 	// Write your code here, remove the panic and write your code
 	//panic("kfree() is not implemented yet...!!");
-	/*int count=-1;
-	uint32 va=(uint32)virtual_address;
-	for(int i=0;i<indx;i++)
+	struct MemBlock * mem_block = find_block(&AllocMemBlocksList,(uint32)virtual_address);
+	if(mem_block != NULL)
 	{
-		count++;
-		if((uint32)virtual_address==information[i].Address)
-			  break;
+		LIST_REMOVE(&AllocMemBlocksList,mem_block);
+		uint32 start = ROUNDDOWN(mem_block->sva,PAGE_SIZE);
+		uint32 end = ROUNDUP(mem_block->sva+mem_block->size,PAGE_SIZE);
+
+		for(uint32 i = start ; i < end; i += PAGE_SIZE)
+			unmap_frame(ptr_page_directory , i);
+
+		insert_sorted_with_merge_freeList(mem_block);
 	}
-	for(int i=0;i<information[count].frames_number;i++)
-	{
-		unmap_frame(ptr_page_directory,(void *)va);
-		va+=(4*1024);
-	}*/
 }
 
 unsigned int kheap_virtual_address(unsigned int physical_address)
@@ -109,10 +106,10 @@ unsigned int kheap_virtual_address(unsigned int physical_address)
 //	panic("kheap_virtual_address() is not implemented yet...!!");
 
 	struct FrameInfo *convert_to_va=to_frame_info(physical_address);
-	//if(physical_address!=E_NO_MEM)
+	if(physical_address!=E_NO_MEM)
 		return convert_to_va->va;
-	//else
-		//return 0;
+	else
+		return 0;
 	//return the virtual address corresponding to given physical_address
 	//refer to the project presentation and documentation for details
 	//EFFICIENT IMPLEMENTATION ~O(1) IS REQUIRED ==================
@@ -123,17 +120,13 @@ unsigned int kheap_physical_address(unsigned int virtual_address)
 	//TODO: [PROJECT MS2] [KERNEL HEAP] kheap_physical_address
 	// Write your code here, remove the panic and write your code
 	//panic("kheap_physical_address() is not implemented yet...!!");
-	uint32 *convert_to_pa=NULL;
-	    struct FrameInfo *frame_information=get_frame_info(ptr_page_directory,virtual_address,&convert_to_pa);
-	    uint32 address_physical=to_physical_address(frame_information);
-	    if(frame_information!=NULL)
-	    {
-	        return address_physical ;
-	    }
-	    else
-	    {
-	        return 0;
-	    }
+	uint32 *ptr_page=NULL;
+	struct FrameInfo *frame_of_the_va = get_frame_info(ptr_page_directory,virtual_address,&ptr_page);
+	uint32 address_physical=to_physical_address(frame_of_the_va);
+	
+	if(frame_of_the_va != NULL)
+		return address_physical;
+	return 0;
 
 	//return the physical address corresponding to given virtual_address
 	//refer to the project presentation and documentation for details

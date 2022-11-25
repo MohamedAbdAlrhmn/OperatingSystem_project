@@ -106,7 +106,7 @@ unsigned int kheap_virtual_address(unsigned int physical_address)
 //	panic("kheap_virtual_address() is not implemented yet...!!");
 
 	struct FrameInfo *convert_to_va=to_frame_info(physical_address);
-	if(physical_address!=E_NO_MEM)
+	if(convert_to_va!=NULL)
 		return convert_to_va->va;
 	else
 		return 0;
@@ -123,7 +123,7 @@ unsigned int kheap_physical_address(unsigned int virtual_address)
 	uint32 *ptr_page=NULL;
 	struct FrameInfo *frame_of_the_va = get_frame_info(ptr_page_directory,virtual_address,&ptr_page);
 	uint32 address_physical=to_physical_address(frame_of_the_va);
-	
+
 	if(frame_of_the_va != NULL)
 		return address_physical;
 	return 0;

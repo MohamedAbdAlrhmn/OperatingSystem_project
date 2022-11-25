@@ -192,6 +192,7 @@ int allocate_chunk(uint32* page_directory, uint32 va, uint32 size, uint32 perms)
 	    result= allocate_frame(&sb_chunck);
 		if(result != E_NO_MEM)
 		{
+			sb_chunck->va = new_virtual_address;
 			result=map_frame(page_directory,sb_chunck,new_virtual_address,perms);
 		}
 	}

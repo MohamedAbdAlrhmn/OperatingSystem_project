@@ -222,7 +222,28 @@ uint32 calculate_required_frames(uint32* page_directory, uint32 sva, uint32 size
 {
 	//TODO: [PROJECT MS2 - BONUS] [CHUNK OPERATIONS] calculate_required_frames
 	// Write your code here, remove the panic and write your code
-	panic("calculate_required_frames() is not implemented yet...!!");
+	//panic("calculate_required_frames() is not implemented yet...!!");
+	uint32 number_of_tables = 0;
+	uint32 number_of_pages = 0;
+	uint32 start_address_pt = ROUNDDOWN(sva, PAGE_SIZE*1024);
+	uint32 start_address = ROUNDDOWN(sva, PAGE_SIZE);
+	do
+	{
+		if(start_address_pt %(PAGE_SIZE*1024) == 0)
+		{
+			uint32 *ptr_page_table = NULL;
+			get_page_table(page_directory, start_address_pt, &ptr_page_table);
+			if(ptr_page_table == NULL)
+				number_of_tables++;
+		}
+		uint32 *ptr_page = NULL;
+	    if (get_frame_info(page_directory, start_address, &ptr_page) == 0)
+			number_of_pages++;
+
+	    start_address += PAGE_SIZE;
+	    start_address_pt = start_address;
+	} while (start_address < sva+size);
+	return number_of_tables + number_of_pages;
 }
 
 //=================================================================================//

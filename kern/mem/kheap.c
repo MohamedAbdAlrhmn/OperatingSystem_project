@@ -63,7 +63,7 @@ void* kmalloc(unsigned int size)
 		mem_block = alloc_block_FF(allocate_size);
 	else if (isKHeapPlacementStrategyBESTFIT())
 		mem_block = alloc_block_BF(allocate_size);
-	else
+	else if (isKHeapPlacementStrategyNEXTFIT())
 		mem_block = alloc_block_NF(allocate_size);
 
 	if (mem_block != NULL )
@@ -71,7 +71,6 @@ void* kmalloc(unsigned int size)
 		int result = allocate_chunk(ptr_page_directory,mem_block->sva,allocate_size,PERM_WRITEABLE| PERM_PRESENT);
 		if (result == 0)
 		{
-			//LIST_INSERT_HEAD(&AllocMemBlocksList, mem_block);
 			insert_sorted_allocList(mem_block);
 			return (uint32 *) mem_block->sva;
 		}

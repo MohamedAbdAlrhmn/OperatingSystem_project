@@ -573,8 +573,12 @@ void * create_user_page_WS(struct Env * e, unsigned int numOfElements)
 {
 	//TODO: [PROJECT MS3] [PROGRAM LOAD] create_user_page_WS()
 	// Write your code here, remove the panic and write your code
-	panic("create_user_page_WS() is not implemented yet...!!");
-
+	//panic("create_user_page_WS() is not implemented yet...!!");
+	uint32 nBytes = sizeof(struct WorkingSetElement) * numOfElements;
+	struct WorkingSetElement* ptr_page_WS = kmalloc(nBytes);
+	if(ptr_page_WS == NULL)
+		panic("NOT ENOUGH KERNEL HEAP SPACE");
+	return ptr_page_WS;
 	//Use kmalloc() to allocate a new space for a working set with numOfElements elements
 }
 
@@ -585,8 +589,11 @@ void * create_user_directory()
 {
 	//TODO: [PROJECT MS3] [PROGRAM LOAD] create_user_directory()
 	// Write your code here, remove the panic and write your code
-	panic("create_user_directory() is not implemented yet...!!");
-
+	//panic("create_user_directory() is not implemented yet...!!");
+	uint32* ptr_user_page_directory = kmalloc(PAGE_SIZE);
+	if(ptr_user_page_directory == NULL)
+		panic("NOT ENOUGH KERNEL HEAP SPACE");
+	return ptr_user_page_directory;
 	//Use kmalloc() to allocate a new directory
 }
 

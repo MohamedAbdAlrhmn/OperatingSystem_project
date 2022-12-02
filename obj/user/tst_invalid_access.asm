@@ -56,8 +56,8 @@ void _main(void)
   800048:	c1 e0 02             	shl    $0x2,%eax
   80004b:	89 45 ec             	mov    %eax,-0x14(%ebp)
 
-		unsigned char *x = (unsigned char *)0x80000000;
-  80004e:	c7 45 e8 00 00 00 80 	movl   $0x80000000,-0x18(%ebp)
+		unsigned char *x = (unsigned char *)(0x00200000-PAGE_SIZE);
+  80004e:	c7 45 e8 00 f0 1f 00 	movl   $0x1ff000,-0x18(%ebp)
 
 		int i=0;
   800055:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
@@ -71,7 +71,7 @@ void _main(void)
   800066:	c6 00 ff             	movb   $0xff,(%eax)
 		uint32 size = 4*kilo;
 
-		unsigned char *x = (unsigned char *)0x80000000;
+		unsigned char *x = (unsigned char *)(0x00200000-PAGE_SIZE);
 
 		int i=0;
 		for(;i< size+20;i++)

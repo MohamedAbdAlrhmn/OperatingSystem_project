@@ -111,10 +111,10 @@ void _main(void)
   8000cc:	7e cb                	jle    800099 <_main+0x61>
 			if( arr[i] != -1) panic("modified stack page(s) not restored correctly");
 
-		if( (sys_pf_calculate_allocated_pages() - usedDiskPages) !=  9) panic("Unexpected extra/less pages have been added to page file");
+		if( (sys_pf_calculate_allocated_pages() - usedDiskPages) !=  10) panic("Unexpected extra/less pages have been added to page file");
   8000ce:	e8 62 13 00 00       	call   801435 <sys_pf_calculate_allocated_pages>
   8000d3:	2b 45 e8             	sub    -0x18(%ebp),%eax
-  8000d6:	83 f8 09             	cmp    $0x9,%eax
+  8000d6:	83 f8 0a             	cmp    $0xa,%eax
   8000d9:	74 14                	je     8000ef <_main+0xb7>
   8000db:	83 ec 04             	sub    $0x4,%esp
   8000de:	68 0c 1c 80 00       	push   $0x801c0c
@@ -135,7 +135,7 @@ void _main(void)
   80010d:	6a 1e                	push   $0x1e
   80010f:	68 e8 1b 80 00       	push   $0x801be8
   800114:	e8 52 01 00 00       	call   80026b <_panic>
-	}
+	}//consider tables of PF, disk pages
 
 	cprintf("Congratulations: stack pages created, modified and read successfully!\n\n");
   800119:	83 ec 0c             	sub    $0xc,%esp

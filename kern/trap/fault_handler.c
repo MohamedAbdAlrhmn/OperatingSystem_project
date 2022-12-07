@@ -80,38 +80,13 @@ void page_fault_handler(struct Env * curenv, uint32 fault_va)
 	//panic("page_fault_handler() is not implemented yet...!!");
 	uint32 current_env_size = env_page_ws_get_size(curenv);
 
-	if(current_env_size < curenv->page_WS_max_size) //Placement
-	{
-		env_page_ws_print(curenv);
-
-		int ret = pf_read_env_page(curenv, (void *)fault_va);
-
-		if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
-		{
-			if(
-				!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
-					(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
-			)
-				panic("ILLEGAL MEMORY ACCESS");
-		}
-		struct FrameInfo *ptr_frame;
-		allocate_frame(&ptr_frame);
-		map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_WRITEABLE|PERM_USER);
-		env_page_ws_set_entry(curenv,curenv->page_last_WS_index,fault_va);
-		curenv->page_last_WS_index++;
-		if(curenv->page_last_WS_index == curenv->page_WS_max_size)
-			curenv->page_last_WS_index = 0;
-
-	}
-	else //Replacement
+	if(current_env_size == curenv->page_WS_max_size) //Replacement
 	{
 		uint32 virtual_address = 0;
-		while(1 == 1)
+		while(1 == 1)  // Find victim virtual
 		{
-			env_page_ws_print(curenv);
 			uint32 per = pt_get_page_permissions(curenv->env_page_directory, curenv->ptr_pageWorkingSet[curenv->page_last_WS_index].virtual_address);
-			cprintf("current per %d\n",per);
-			if((per&PERM_USED) == PERM_USED)
+			if((per&PERM_USED)== PERM_USED)
 				pt_set_page_permissions(curenv->env_page_directory,curenv->ptr_pageWorkingSet[curenv->page_last_WS_index].virtual_address,0,PERM_USED);
 			else
 			{
@@ -123,33 +98,36 @@ void page_fault_handler(struct Env * curenv, uint32 fault_va)
 			else
 				curenv->page_last_WS_index++;
 		}
-		cprintf("-----------------");
-		uint32 perm = pt_get_page_permissions(curenv->env_page_directory, virtual_address);
 
+		uint32 perm = pt_get_page_permissions(curenv->env_page_directory, virtual_address);
 		uint32 *ptr_page_table = NULL ;
 		struct FrameInfo * frame_info = get_frame_info(curenv->env_page_directory, virtual_address,&ptr_page_table);
 
 		if((perm&PERM_MODIFIED)== PERM_MODIFIED)
-		{
 			pf_update_env_page(curenv,virtual_address,frame_info);
-		}
 
-		free_frame(frame_info);
-	    // remove from working set
 		env_page_ws_invalidate(curenv,virtual_address);
-
-		env_page_ws_print(curenv);
+		unmap_frame(curenv->env_page_directory,virtual_address);
+	}
+		// Placement
 		struct FrameInfo *ptr_frame;
 		allocate_frame(&ptr_frame);
 		map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_WRITEABLE|PERM_USER);
+		int ret = pf_read_env_page(curenv, (void *)fault_va);
+
+		if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
+		{
+			if(
+				!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
+					(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
+			)
+				panic("ILLEGAL MEMORY ACCESS");
+		}
 		env_page_ws_set_entry(curenv,curenv->page_last_WS_index,fault_va);
 		curenv->page_last_WS_index++;
 		if(curenv->page_last_WS_index == curenv->page_WS_max_size)
 			curenv->page_last_WS_index = 0;
 
-		env_page_ws_print(curenv);
-
-	}
 	//refer to the project presentation and documentation for details
 }
 void __page_fault_handler_with_buffering(struct Env * curenv, uint32 fault_va)

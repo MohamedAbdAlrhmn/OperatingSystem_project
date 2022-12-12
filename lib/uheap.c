@@ -159,26 +159,26 @@ void* sget(int32 ownerEnvID, char *sharedVarName)
 
 	//TODO: [PROJECT MS3] [SHARING - USER SIDE] sget()
 	// Write your code here, remove the panic and write your code
-	//panic("sget() is not implemented yet...!!");
-	uint32 size = -1;
-	size = sys_getSizeOfSharedObject(ownerEnvID,sharedVarName);
-	if (size != -1)
-	{
-		uint32 allocate_space=ROUNDUP(size,PAGE_SIZE);
-		struct MemBlock * mem_block;
-		uint32 virtual_address = -1;
-
-		if (sys_isUHeapPlacementStrategyFIRSTFIT())
-			mem_block = alloc_block_FF(allocate_space);
-
-		if(mem_block != NULL)
-		{
-			virtual_address = sys_getSharedObject(ownerEnvID,sharedVarName,(void*)mem_block->sva);
-			if (virtual_address != -1)
-				return (void)virtual_address;
-		}
-	}
-	return (void)NULL;
+	panic("sget() is not implemented yet...!!");
+//	uint32 size = -1;
+//	size = sys_getSizeOfSharedObject(ownerEnvID,sharedVarName);
+//	if (size != -1)
+//	{
+//		uint32 allocate_space=ROUNDUP(size,PAGE_SIZE);
+//		struct MemBlock * mem_block;
+//		uint32 virtual_address = -1;
+//
+//		if (sys_isUHeapPlacementStrategyFIRSTFIT())
+//			mem_block = alloc_block_FF(allocate_space);
+//
+//		if(mem_block != NULL)
+//		{
+//			virtual_address = sys_getSharedObject(ownerEnvID,sharedVarName,(void*)mem_block->sva);
+//			if (virtual_address != -1)
+//				return (void)virtual_address;
+//		}
+//	}
+//	return (void)NULL;
 	// Steps:
 	//	1) Get the size of the shared variable (use sys_getSizeOfSharedObject())
 	//	2) If not exists, return NULL

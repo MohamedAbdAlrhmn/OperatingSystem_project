@@ -269,16 +269,16 @@ int createSharedObject(int32 ownerID, char* shareName, uint32 size, uint8 isWrit
 {
 	//TODO: [PROJECT MS3] [SHARING - KERNEL SIDE] createSharedObject()
 	// your code is here, remove the panic and write your code
-	//panic("createSharedObject() is not implemented yet...!!");
+	panic("createSharedObject() is not implemented yet...!!");
 
-	struct Env* myenv = curenv; //The calling environment
-	struct share* allocatedObject = NULL;
-	uint32 object_id = -1 ;
-	object_id = allocate_share_object(&allocatedObject);
-	if(object_id == E_NO_SHARE)
-		return -1;
-	for(int i = 0; i< )
-	map_frame(myenv->env_page_directory,fram_info,virtual_address,PERM_WRITEABLE);
+//	struct Env* myenv = curenv; //The calling environment
+//	struct share* allocatedObject = NULL;
+//	uint32 object_id = -1 ;
+//	object_id = allocate_share_object(&allocatedObject);
+//	if(object_id == E_NO_SHARE)
+//		return -1;
+//	for(int i = 0; i< )
+//	map_frame(myenv->env_page_directory,fram_info,virtual_address,PERM_WRITEABLE);
 	// This function should create the shared object at the given virtual address with the given size
 	// and return the ShareObjectID
 	// RETURN:
@@ -294,19 +294,19 @@ int getSharedObject(int32 ownerID, char* shareName, void* virtual_address)
 {
 	//TODO: [PROJECT MS3] [SHARING - KERNEL SIDE] getSharedObject()
 	// your code is here, remove the panic and write your code
-	//panic("getSharedObject() is not implemented yet...!!");
-
-	struct Env* myenv = curenv; //The calling environment
-	uint32 shared_index;
-	struct FrameInfo* frame = NULL;
-	uint32 py_adress ;
-
-	shared_index = get_share_object_ID(ownerID,shareName);
-	if(shared_index == E_SHARED_MEM_NOT_EXISTS)
-		return shared_index;
-
-	frame = get_frame_from_storage(shares[shared_index].framesStorage,shared_index);
-	py_adress = to_physical_address(frame);
+	panic("getSharedObject() is not implemented yet...!!");
+//
+//	struct Env* myenv = curenv; //The calling environment
+//	uint32 shared_index;
+//	struct FrameInfo* frame = NULL;
+//	uint32 py_adress ;
+//
+//	shared_index = get_share_object_ID(ownerID,shareName);
+//	if(shared_index == E_SHARED_MEM_NOT_EXISTS)
+//		return shared_index;
+//
+//	frame = get_frame_from_storage(shares[shared_index].framesStorage,shared_index);
+//	py_adress = to_physical_address(frame);
 
 
 	// 	This function should share the required object in the heap of the current environment

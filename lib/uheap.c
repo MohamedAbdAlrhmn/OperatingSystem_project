@@ -67,7 +67,7 @@ void* malloc(uint32 size)
 
 	//TODO: [PROJECT MS3] [USER HEAP - USER SIDE] malloc
 	// your code is here, remove the panic and write your code
-	panic("malloc() is not implemented yet...!!");
+	//panic("malloc() is not implemented yet...!!");
 
 	// Steps:
 	//	1) Implement FF strategy to search the heap for suitable space
@@ -76,6 +76,20 @@ void* malloc(uint32 size)
 	// 	3) Return pointer containing the virtual address of allocated space,
 	//
 	//Use sys_isUHeapPlacementStrategyFIRSTFIT()... to check the current strategy
+	uint32 malloc_allocsize=ROUNDUP(size,PAGE_SIZE);
+	 //int ret=0;
+	struct MemBlock * user_block;
+	if(sys_isUHeapPlacementStrategyFIRSTFIT())
+		user_block = alloc_block_FF(malloc_allocsize);
+
+	if(user_block!=NULL)
+	{
+		//sys_allocate_chunk(user_block->sva,malloc_allocsize,PERM_WRITEABLE| PERM_PRESENT);
+		insert_sorted_allocList(user_block);
+		return (uint32 *)user_block->sva;
+	}
+
+    return NULL;
 }
 
 //=================================

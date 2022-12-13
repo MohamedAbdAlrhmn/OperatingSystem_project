@@ -115,21 +115,6 @@ void* smalloc(char *sharedVarName, uint32 size, uint8 isWritable)
 	//==============================================================
 
 	//TODO: [PROJECT MS3] [SHARING - USER SIDE] smalloc()
-	// Write your code here, remove the panic and write your code
-	uint32 allocate_space=ROUNDUP(size,PAGE_SIZE);
-	struct MemBlock * mem_block;
-	uint32 virtual_address = -1;
-
-	if (sys_isUHeapPlacementStrategyFIRSTFIT())
-		mem_block = alloc_block_FF(allocate_space);
-
-	if(mem_block != NULL)
-	{
-		virtual_address = sys_createSharedObject(sharedVarName,size,isWritable,(void*)mem_block->sva);
-		if (virtual_address != -1)
-			return (void*)virtual_address;
-	}
-	return NULL;
 	//panic("smalloc() is not implemented yet...!!");
 	// Steps:
 	//	1) Implement FIRST FIT strategy to search the heap for suitable space
@@ -144,7 +129,20 @@ void* smalloc(char *sharedVarName, uint32 size, uint8 isWritable)
 	//This function should find the space of the required range
 	// ******** ON 4KB BOUNDARY ******************* //
 
-	//Use sys_isUHeapPlacementStrategyFIRSTFIT() to check the current strategy
+	uint32 allocate_space=ROUNDUP(size,PAGE_SIZE);
+	struct MemBlock * mem_block;
+	uint32 virtual_address = -1;
+
+	if (sys_isUHeapPlacementStrategyFIRSTFIT())
+		mem_block = alloc_block_FF(allocate_space);
+
+	if(mem_block != NULL)
+	{
+		int result = sys_createSharedObject(sharedVarName,size,isWritable,(void*)mem_block->sva);
+		if (result != -1 && result != E_NO_SHARE && result != E_SHARED_MEM_EXISTS)
+			return (void*) mem_block->sva;
+	}
+	return NULL;
 }
 
 //========================================

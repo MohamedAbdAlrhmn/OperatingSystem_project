@@ -166,13 +166,11 @@ int createSemaphore(int32 ownerEnvID, char* semaphoreName, uint32 initialValue)
 				new_semaphore->value=initialValue;
 				return result_of_allocation;
 			}
-
 		}
 		else
 		{
 			return E_SEMAPHORE_EXISTS;
 		}
-
 		return E_NO_SEMAPHORE;
 }
 
@@ -197,15 +195,15 @@ void waitSemaphore(int32 ownerEnvID, char* semaphoreName)
 	//	4) Call "fos_scheduler()" to continue running the remaining envs
 
 	int return_of_get=get_semaphore_object_ID(ownerEnvID,semaphoreName);
-		semaphores[return_of_get].value--;
-		if(semaphores[return_of_get].value<0)
-		{
-			enqueue(&semaphores[return_of_get].env_queue,myenv);
-			myenv->env_status=ENV_BLOCKED;
-			//curenv->env_status=ENV_BLOCKED;
-			curenv=NULL;
-		}
-		fos_scheduler();
+	semaphores[return_of_get].value--;
+	if(semaphores[return_of_get].value<0)
+	{
+		enqueue(&semaphores[return_of_get].env_queue,myenv);
+		myenv->env_status=ENV_BLOCKED;
+		//curenv->env_status=ENV_BLOCKED;
+		curenv=NULL;
+	}
+	fos_scheduler();
 }
 
 //==============
@@ -224,22 +222,15 @@ void signalSemaphore(int ownerEnvID, char* semaphoreName)
 	//		a) removing it from semaphore queue		[refer to helper functions in doc]
 	//		b) adding it to ready queue				[refer to helper functions in doc]
 	//		c) changing its status to ENV_READY
-
-
 	    //uint32 val=0;
-		struct Env* env;
-		int return_of_get=get_semaphore_object_ID(ownerEnvID,semaphoreName);
-		semaphores[return_of_get].value++;
-		if(semaphores[return_of_get].value<=0)
-		{
-			env=dequeue(&semaphores[return_of_get].env_queue);
-			sched_insert_ready(env);
-			env->env_status=ENV_READY;
-		}
-
-
-
-
-
+	struct Env* env;
+	int return_of_get=get_semaphore_object_ID(ownerEnvID,semaphoreName);
+	semaphores[return_of_get].value++;
+	if(semaphores[return_of_get].value<=0)
+	{
+		env=dequeue(&semaphores[return_of_get].env_queue);
+		sched_insert_ready(env);
+		env->env_status=ENV_READY;
+	}
 }
 

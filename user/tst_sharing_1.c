@@ -25,7 +25,7 @@ _main(void)
 	uint32 expected ;
 	cprintf("STEP A: checking the creation of shared variables... \n");
 	{
-		int freeFrames = sys_calculate_free_frames() ;
+		int freeFrames = sys_calculate_free_frames();
 		x = smalloc("x", PAGE_SIZE, 1);
 		if (x != (uint32*)USER_HEAP_START) panic("Returned address is not correct. check the setting of it and/or the updating of the shared_mem_free_address");
 		expected = 1+1+2 ;

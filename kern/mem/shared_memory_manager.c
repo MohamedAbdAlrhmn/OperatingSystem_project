@@ -269,22 +269,59 @@ int createSharedObject(int32 ownerID, char* shareName, uint32 size, uint8 isWrit
 {
 	//TODO: [PROJECT MS3] [SHARING - KERNEL SIDE] createSharedObject()
 	// your code is here, remove the panic and write your code
-	panic("createSharedObject() is not implemented yet...!!");
+	//panic("createSharedObject() is not implemented yet...!!");
 
-//	struct Env* myenv = curenv; //The calling environment
-//	struct share* allocatedObject = NULL;
-//	uint32 object_id = -1 ;
-//	object_id = allocate_share_object(&allocatedObject);
-//	if(object_id == E_NO_SHARE)
-//		return -1;
-//	for(int i = 0; i< )
-//	map_frame(myenv->env_page_directory,fram_info,virtual_address,PERM_WRITEABLE);
-	// This function should create the shared object at the given virtual address with the given size
-	// and return the ShareObjectID
-	// RETURN:
+	//This function should create the shared object at the given virtual address with the given size
+	//and return the ShareObjectID
+	//RETURN:
 	//	a) ShareObjectID (its index in "shares" array) if success
 	//	b) E_SHARED_MEM_EXISTS if the shared object already exists
 	//	c) E_NO_SHARE if the number of shared objects reaches max "MAX_SHARES"
+
+	struct Env* myenv = curenv; //The calling environment
+
+	//Check if the shared object already exists
+	int shared_Result = get_share_object_ID(ownerID , shareName);
+	if (shared_Result != E_SHARED_MEM_NOT_EXISTS)
+		return E_SHARED_MEM_EXISTS;
+
+	//Check if any shared object available
+	struct Share * allocatedObject = NULL;
+	int sharedObj_index = allocate_share_object(&allocatedObject);
+	if(sharedObj_index == E_NO_SHARE)
+		return E_NO_SHARE;
+
+	//Allocate Frames for each page
+	uint32 va = (uint32) virtual_address;
+	uint32 Rounded_Size = ROUNDUP(size,PAGE_SIZE);
+	struct FrameInfo *sb_chunck;
+	int j = 0;
+
+	for(uint32 i = 0; i < Rounded_Size; i += PAGE_SIZE)
+	{
+		sb_chunck= NULL;
+		int result= allocate_frame(&sb_chunck);
+		if(result != E_NO_MEM)
+		{
+			sb_chunck->va = va;
+			int m_result=map_frame(curenv->env_page_directory ,sb_chunck ,va, PERM_WRITEABLE | PERM_USER);
+			add_frame_to_storage(shares[sharedObj_index].framesStorage , sb_chunck , j);
+			j++;
+			va += PAGE_SIZE;
+		}
+		else
+			return -1;
+	}
+
+	//Initialize the shared object infos
+	shares[sharedObj_index].ownerID = ownerID;
+	strcpy(shares[sharedObj_index].name,shareName);
+	shares[sharedObj_index].references = 1;
+	shares[sharedObj_index].size = size;
+	shares[sharedObj_index].isWritable = isWritable;
+	shares[sharedObj_index].empty = 0;
+
+	return sharedObj_index;
 }
 
 //======================

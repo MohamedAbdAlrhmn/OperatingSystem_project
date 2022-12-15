@@ -189,7 +189,7 @@ void* sget(int32 ownerEnvID, char *sharedVarName)
 				return (void *)mem_block->sva;
 		}
 	}
-	return (void *)NULL;
+	return NULL;
 	// Steps:
 	//	1) Get the size of the shared variable (use sys_getSizeOfSharedObject())
 	//	2) If not exists, return NULL

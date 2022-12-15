@@ -3342,7 +3342,7 @@ void* sget(int32 ownerEnvID, char *sharedVarName)
   80174d:	eb 05                	jmp    801754 <sget+0xa0>
 		}
 	}
-	return (void *)NULL;
+	return NULL;
   80174f:	b8 00 00 00 00       	mov    $0x0,%eax
 
 	//This function should find the space for sharing the variable

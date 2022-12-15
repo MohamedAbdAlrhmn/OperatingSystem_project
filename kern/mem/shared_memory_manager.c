@@ -301,7 +301,7 @@ int createSharedObject(int32 ownerID, char* shareName, uint32 size, uint8 isWrit
 		if(result != E_NO_MEM)
 		{
 			sb_chunck->va = va;
-			int m_result=map_frame(curenv->env_page_directory ,sb_chunck ,va, PERM_WRITEABLE | PERM_USER);
+			map_frame(curenv->env_page_directory ,sb_chunck ,va, PERM_WRITEABLE | PERM_USER);
 			add_frame_to_storage(shares[sharedObj_index].framesStorage , sb_chunck , j);
 			j++;
 			va += PAGE_SIZE;
@@ -349,9 +349,9 @@ int getSharedObject(int32 ownerID, char* shareName, void* virtual_address)
 	{
 		struct FrameInfo* frame = get_frame_from_storage(shares[shared_index].framesStorage, index_of_page);
 		if(shares[shared_index].isWritable == 1)
-			map_frame(myenv->env_page_directory, frame, va, PERM_WRITEABLE | PERM_USER);
+			map_frame(myenv->env_page_directory, frame, va, PERM_WRITEABLE | PERM_USER | PERM_PRESENT);
 		else
-			map_frame(myenv->env_page_directory, frame, va, PERM_USER);
+			map_frame(myenv->env_page_directory, frame, va, PERM_USER | PERM_PRESENT);
 		va += PAGE_SIZE;
 	}
 

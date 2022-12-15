@@ -110,6 +110,7 @@ void page_fault_handler(struct Env * curenv, uint32 fault_va)
 		unmap_frame(curenv->env_page_directory,virtual_address);
 	}
 		// Placement
+	cprintf("-------------------------------------There is a fault\n");
 		struct FrameInfo *ptr_frame;
 		allocate_frame(&ptr_frame);
 		map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_WRITEABLE|PERM_USER);

@@ -109,24 +109,23 @@ void page_fault_handler(struct Env * curenv, uint32 fault_va)
 		env_page_ws_invalidate(curenv,virtual_address);
 		unmap_frame(curenv->env_page_directory,virtual_address);
 	}
-		// Placement
-	cprintf("-------------------------------------There is a fault\n");
-		struct FrameInfo *ptr_frame;
-		allocate_frame(&ptr_frame);
-		map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_WRITEABLE|PERM_USER);
-		int ret = pf_read_env_page(curenv, (void *)fault_va);
+	// Placement
+	struct FrameInfo *ptr_frame;
+	allocate_frame(&ptr_frame);
+	map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_PRESENT|PERM_WRITEABLE|PERM_USER);
+	int ret = pf_read_env_page(curenv, (void *)fault_va);
 
-		if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
-		{
-			if(
-				!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
-					(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
-			)
-				panic("ILLEGAL MEMORY ACCESS");
-		}
-		env_page_ws_set_entry(curenv,curenv->page_last_WS_index,fault_va);
-		curenv->page_last_WS_index++;
-		if(curenv->page_last_WS_index == curenv->page_WS_max_size)
+	if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
+	{
+		if(
+			!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
+				(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
+		)
+			panic("ILLEGAL MEMORY ACCESS");
+	}
+	env_page_ws_set_entry(curenv,curenv->page_last_WS_index,fault_va);
+	curenv->page_last_WS_index++;
+	if(curenv->page_last_WS_index == curenv->page_WS_max_size)
 			curenv->page_last_WS_index = 0;
 
 	//refer to the project presentation and documentation for details

@@ -214,21 +214,28 @@ void _main(void)
 		if ((usedDiskPages - sys_pf_calculate_allocated_pages()) != 0) panic("Wrong free: Extra or less pages are removed from PageFile");
 		if ((sys_calculate_free_frames() - freeFrames) != 2 ) panic("Wrong free: WS pages in memory and/or page tables are not freed correctly");
 		int var;
+		//int count = 1;
+		//cprintf("Env size: %d\n",myEnv->page_WS_max_size);
 		for (var = 0; var < (myEnv->page_WS_max_size); ++var)
 		{
+			//cprintf("%d\n",count);
+			//count++;
 			if(ROUNDDOWN(myEnv->__uptr_pws[var].virtual_address,PAGE_SIZE) == ROUNDDOWN((uint32)(&(byteArr[0])), PAGE_SIZE))
 				panic("free: page is not removed from WS");
 			if(ROUNDDOWN(myEnv->__uptr_pws[var].virtual_address,PAGE_SIZE) == ROUNDDOWN((uint32)(&(byteArr[lastIndexOfByte])), PAGE_SIZE))
 				panic("free: page is not removed from WS");
 		}
-
+		//cprintf("Done first test case\n");
 
 		//Free 2nd 2 MB
 		freeFrames = sys_calculate_free_frames() ;
 		usedDiskPages = sys_pf_calculate_allocated_pages() ;
 		free(ptr_allocations[1]);
 		if ((usedDiskPages - sys_pf_calculate_allocated_pages()) != 0) panic("Wrong free: Extra or less pages are removed from PageFile");
-		if ((sys_calculate_free_frames() - freeFrames) != 2 + 1) panic("Wrong free: WS pages in memory and/or page tables are not freed correctly");
+		if ((sys_calculate_free_frames() - freeFrames) != 2 + 1){
+			cprintf("%d\n",(sys_calculate_free_frames() - freeFrames));
+			panic("Wrong free: WS pages in memory and/or page tables are not freed correctly");
+		}
 		for (var = 0; var < (myEnv->page_WS_max_size); ++var)
 		{
 			if(ROUNDDOWN(myEnv->__uptr_pws[var].virtual_address,PAGE_SIZE) == ROUNDDOWN((uint32)(&(shortArr[0])), PAGE_SIZE))
@@ -236,7 +243,6 @@ void _main(void)
 			if(ROUNDDOWN(myEnv->__uptr_pws[var].virtual_address,PAGE_SIZE) == ROUNDDOWN((uint32)(&(shortArr[lastIndexOfShort])), PAGE_SIZE))
 				panic("free: page is not removed from WS");
 		}
-
 		//Free 6 MB
 		freeFrames = sys_calculate_free_frames() ;
 		usedDiskPages = sys_pf_calculate_allocated_pages() ;

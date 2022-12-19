@@ -214,26 +214,26 @@ void calculate_allocated_space(uint32* page_directory, uint32 sva, uint32 eva, u
 	uint32 size = end_address - start_address;
 	uint32 check = 0;
 	do
+	{
+		if(start_address_pt %(PAGE_SIZE*1024) == 0)
 		{
-			if(start_address_pt %(PAGE_SIZE*1024) == 0)
+			uint32 *ptr_page_table = NULL;
+			get_page_table(page_directory, start_address_pt, &ptr_page_table);
+			if(ptr_page_table != NULL)
 			{
-				uint32 *ptr_page_table = NULL;
-				get_page_table(page_directory, start_address_pt, &ptr_page_table);
-				if(ptr_page_table != NULL)
-				{
-					(*num_tables)++;
-					check = 1;
-				}
+				(*num_tables)++;
+				check = 1;
 			}
-			if(check == 1)
-			{
-				uint32 *ptr_page = NULL;
-				if (get_frame_info(page_directory, start_address, &ptr_page) != 0)
-					(*num_pages)++;
-			}
-			start_address += PAGE_SIZE;
-			start_address_pt = start_address;
-		} while (start_address < sva+size);
+		}
+		if(check == 1)
+		{
+			uint32 *ptr_page = NULL;
+			if (get_frame_info(page_directory, start_address, &ptr_page) != 0)
+				(*num_pages)++;
+		}
+		start_address += PAGE_SIZE;
+		start_address_pt = start_address;
+	} while (start_address < sva+size);
 }
 
 /*BONUS*/
@@ -255,7 +255,7 @@ uint32 calculate_required_frames(uint32* page_directory, uint32 sva, uint32 size
 	uint32 start_address = ROUNDDOWN(sva, PAGE_SIZE);
 	do
 	{
-		if(start_address_pt %(PAGE_SIZE*1024) == 0)
+		if(start_address_pt % (PAGE_SIZE*1024) == 0)
 		{
 			uint32 *ptr_page_table = NULL;
 			get_page_table(page_directory, start_address_pt, &ptr_page_table);
@@ -300,8 +300,44 @@ void free_user_mem(struct Env* e, uint32 virtual_address, uint32 size)
 {
 	//TODO: [PROJECT MS3] [USER HEAP - KERNEL SIDE] free_user_mem
 	// Write your code here, remove the panic and write your code
-	panic("free_user_mem() is not implemented yet...!!");
+	//panic("free_user_mem() is not implemented yet...!!");
+	size = ROUNDUP(size,PAGE_SIZE);
+	virtual_address = ROUNDDOWN(virtual_address,PAGE_SIZE);
+	//uint32 end = ROUNDUP(virtual_address+size,PAGE_SIZE);
+	//virtual_address = ROUNDDOWN(virtual_address,PAGE_SIZE);
+	//cprintf("Before loop\n");
+	//int count =1;
+	int check = 0;
+	for(uint32 i = virtual_address; i < virtual_address + size ;i+=PAGE_SIZE)
+	{
+		//cprintf("Before Invalidate\n");
+		//cprintf("%d\n",count);
+		//count++;
+		check = 0;
+		pf_remove_env_page(e,i);
+		env_page_ws_invalidate(e,i);
+		unmap_frame(e->env_page_directory,i);
 
+		uint32* ptr_page = NULL;
+		get_page_table(e->env_page_directory,i,&ptr_page);
+		if (ptr_page != NULL)
+		{
+			for(int j = 0; j < 1024;j++)
+			{
+				if(ptr_page[j] != 0)
+				{
+					check = 1;
+					break;
+				}
+			}
+			if(check == 0)
+			{
+				pd_clear_page_dir_entry(e->env_page_directory, *ptr_page);
+				kfree((void *)ptr_page);
+				//pt_set_page_permissions(e->env_page_directory,*ptr_page,0,PERM_PRESENT);
+			}
+		}
+	}
 	//This function should:
 	//1. Free ALL pages of the given range from the Page File
 	//2. Free ONLY pages that are resident in the working set from the memory

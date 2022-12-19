@@ -61,9 +61,13 @@ void _main(void)
 		uint32 pageWSEntries[7] = {0x80000000, 0x80500000, 0x80800000, 0x800000, 0x803000, 0x200000, 0xeebfd000};
 
 		int i = 0, j ;
+
+		int count = 1;
 		for (; i < 7; i++)
 		{
 			int found = 0 ;
+			cprintf("%d\n",count);
+			count++;
 			for (j=0; j < (myEnv->page_WS_max_size); j++)
 			{
 				if (pageWSEntries[i] == ROUNDDOWN(myEnv->__uptr_pws[j].virtual_address,PAGE_SIZE) )
@@ -74,6 +78,7 @@ void _main(void)
 			}
 			if (!found)
 				panic("PAGE Placement algorithm failed after applying freeHeap. Page at VA %x is expected but not found", pageWSEntries[i]);
+			cprintf("done\n");
 		}
 
 		if( (freePages - sys_calculate_free_frames() ) != 6 ) panic("Extra/Less memory are wrongly allocated. diff = %d, expected = %d", freePages - sys_calculate_free_frames(), 8);

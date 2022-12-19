@@ -108,8 +108,14 @@ void free(void* virtual_address)
 {
 	//TODO: [PROJECT MS3] [USER HEAP - USER SIDE] free
 	// your code is here, remove the panic and write your code
-	panic("free() is not implemented yet...!!");
-
+	//panic("free() is not implemented yet...!!");
+	struct MemBlock * free_block=find_block(&AllocMemBlocksList,(uint32)virtual_address);
+	if(free_block!=NULL)
+	{
+		sys_free_user_mem(free_block->sva,free_block->size);
+		LIST_REMOVE(&AllocMemBlocksList,free_block);
+		insert_sorted_with_merge_freeList(free_block);
+	}
 
 	//you should get the size of the given allocation using its address
 	//you need to call sys_free_user_mem()

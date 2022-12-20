@@ -109,27 +109,52 @@ void page_fault_handler(struct Env * curenv, uint32 fault_va)
 		env_page_ws_invalidate(curenv,virtual_address);
 		unmap_frame(curenv->env_page_directory,virtual_address);
 	}
-	// Placement
-	struct FrameInfo *ptr_frame;
-	allocate_frame(&ptr_frame);
-	map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_PRESENT|PERM_WRITEABLE|PERM_USER);
-	int ret = pf_read_env_page(curenv, (void *)fault_va);
+		// Placement
+		struct FrameInfo *ptr_frame;
+		allocate_frame(&ptr_frame);
+		map_frame(curenv->env_page_directory,ptr_frame,fault_va, PERM_WRITEABLE|PERM_USER);
+		int ret = pf_read_env_page(curenv, (void *)fault_va);
 
-	if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
-	{
-		if(
-			!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
-				(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
-		)
-			panic("ILLEGAL MEMORY ACCESS");
-	}
-	env_page_ws_set_entry(curenv,curenv->page_last_WS_index,fault_va);
-	curenv->page_last_WS_index++;
-	if(curenv->page_last_WS_index == curenv->page_WS_max_size)
-			curenv->page_last_WS_index = 0;
+		if(ret == E_PAGE_NOT_EXIST_IN_PF) // Check if page in Page File
+		{
+			if(
+				!((fault_va < USTACKTOP && fault_va >= USTACKBOTTOM) || // Check if page in Stack
+					(fault_va < USER_HEAP_MAX && fault_va >= USER_HEAP_START)) // Check if page in User Heap
+			)
+				panic("ILLEGAL MEMORY ACCESS");
+		}
+		int current_index = 0;
+		int next_index = 1;
+		while(1==1)
+		{
+			uint32 check = env_page_ws_is_entry_empty(curenv,current_index);
+			if (check == 1)
+			{
+				if(next_index == 1)
+				{
+					next_index = 0;
+					env_page_ws_set_entry(curenv,current_index,fault_va);
 
-	//refer to the project presentation and documentation for details
+					curenv->page_last_WS_index = current_index + 1;
+					if(curenv->page_last_WS_index == curenv->page_WS_max_size)
+							curenv->page_last_WS_index = 0;
+				}
+				else
+				{
+					curenv->page_last_WS_index = current_index;
+					break;
+				}
+			}
+
+			current_index++;
+			if(current_index == curenv->page_WS_max_size)
+				break;
+		}
+	        //refer to the project presentation and documentation for details
 }
+
+
+
 void __page_fault_handler_with_buffering(struct Env * curenv, uint32 fault_va)
 {
 	// Write your code here, remove the panic and write your code

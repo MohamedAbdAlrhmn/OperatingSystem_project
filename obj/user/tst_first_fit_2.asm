@@ -3920,11 +3920,12 @@ void sfree(void* virtual_address)
   801cb8:	83 ec 08             	sub    $0x8,%esp
 	//TODO: [PROJECT MS3 - BONUS] [SHARING - USER SIDE] sfree()
 
+
 	// Write your code here, remove the panic and write your code
 	panic("sfree() is not implemented yet...!!");
   801cbb:	83 ec 04             	sub    $0x4,%esp
   801cbe:	68 ec 43 80 00       	push   $0x8043ec
-  801cc3:	68 0b 01 00 00       	push   $0x10b
+  801cc3:	68 0c 01 00 00       	push   $0x10c
   801cc8:	68 93 43 80 00       	push   $0x804393
   801ccd:	e8 ea ea ff ff       	call   8007bc <_panic>
 
@@ -3941,7 +3942,7 @@ void expand(uint32 newSize)
 	panic("Not Implemented");
   801cd8:	83 ec 04             	sub    $0x4,%esp
   801cdb:	68 10 44 80 00       	push   $0x804410
-  801ce0:	68 16 01 00 00       	push   $0x116
+  801ce0:	68 44 01 00 00       	push   $0x144
   801ce5:	68 93 43 80 00       	push   $0x804393
   801cea:	e8 cd ea ff ff       	call   8007bc <_panic>
 
@@ -3956,7 +3957,7 @@ void shrink(uint32 newSize)
 	panic("Not Implemented");
   801cf5:	83 ec 04             	sub    $0x4,%esp
   801cf8:	68 10 44 80 00       	push   $0x804410
-  801cfd:	68 1b 01 00 00       	push   $0x11b
+  801cfd:	68 49 01 00 00       	push   $0x149
   801d02:	68 93 43 80 00       	push   $0x804393
   801d07:	e8 b0 ea ff ff       	call   8007bc <_panic>
 
@@ -3971,7 +3972,7 @@ void freeHeap(void* virtual_address)
 	panic("Not Implemented");
   801d12:	83 ec 04             	sub    $0x4,%esp
   801d15:	68 10 44 80 00       	push   $0x804410
-  801d1a:	68 20 01 00 00       	push   $0x120
+  801d1a:	68 4e 01 00 00       	push   $0x14e
   801d1f:	68 93 43 80 00       	push   $0x804393
   801d24:	e8 93 ea ff ff       	call   8007bc <_panic>
 

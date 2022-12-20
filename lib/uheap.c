@@ -263,8 +263,54 @@ void sfree(void* virtual_address)
 {
 	//TODO: [PROJECT MS3 - BONUS] [SHARING - USER SIDE] sfree()
 
+
 	// Write your code here, remove the panic and write your code
 	panic("sfree() is not implemented yet...!!");
+
+	/*struct Env* myenv = curenv; //The calling environment
+	uint32 check ;
+	create_shares_array()
+	startVA= ROUNDDOWN(startVA,PAGE_SIZE);
+
+	int size_count = ROUNDUP(shares[sharedObjectID].size,PAGE_SIZE) / PAGE_SIZE;
+	for(int index_of_page = 0; index_of_page < size_count; index_of_page++)
+	{
+
+		struct FrameInfo* frame = get_frame_from_storage(shares[index_of_page].framesStorage, index_of_page);
+		unmap_frame(curenv->env_page_directory,frame->va);
+		uint32* ptr_page = NULL;
+		get_page_table(curenv->env_page_directory,(uint32)startVA,&ptr_page);
+
+		if (ptr_page != NULL)
+		{
+
+			for(int j = 0; j < 1024;j++)
+			{
+				if(ptr_page[j] != 0)
+				{
+					check = 1;
+					break;
+				}
+			}
+			if(check == 0)
+			{
+				pd_clear_page_dir_entry(curenv->env_page_directory, *ptr_page);
+				kfree((void *)ptr_page);
+			}
+		}
+		startVA += PAGE_SIZE;
+
+	}
+	shares[sharedObjectID].references -- ;
+	struct Share Last_element;
+	Last_element = shares[MAX_SHARES-1];
+	uint32 y;
+	if(shares[sharedObjectID].name == Last_element.name )
+	{
+		y = sys_free_share_object(sharedObjectID);
+		if (y == E_SHARED_MEM_NOT_EXISTS )
+			return y;
+	}*/
 }
 
 

@@ -354,8 +354,6 @@ int getSharedObject(int32 ownerID, char* shareName, void* virtual_address)
 			map_frame(myenv->env_page_directory, frame, va, PERM_USER | PERM_PRESENT);
 		va += PAGE_SIZE;
 	}
-
-	//shares[shared_index].references++;
 	return shared_index;
 }
 
@@ -370,9 +368,52 @@ int freeSharedObject(int32 sharedObjectID, void *startVA)
 {
 	//TODO: [PROJECT MS3 - BONUS] [SHARING - KERNEL SIDE] freeSharedObject()
 	// your code is here, remove the panic and write your code
-	panic("freeSharedObject() is not implemented yet...!!");
+	//panic("freeSharedObject() is not implemented yet...!!");
 
 	struct Env* myenv = curenv; //The calling environment
+	uint32 check ;
+	startVA= ROUNDDOWN(startVA,PAGE_SIZE);
+	int size_count = ROUNDUP(shares[sharedObjectID].size,PAGE_SIZE) / PAGE_SIZE;
+	for(int index_of_page = 0; index_of_page < size_count; index_of_page++)
+	{
+
+		struct FrameInfo* frame = get_frame_from_storage(shares[index_of_page].framesStorage, index_of_page);
+		unmap_frame(curenv->env_page_directory,frame->va);
+		uint32* ptr_page = NULL;
+		get_page_table(curenv->env_page_directory,(uint32)startVA,&ptr_page);
+
+		if (ptr_page != NULL)
+		{
+			int index = 0;
+			do
+			{
+				if(ptr_page[index] != 0)
+				{
+					check = 1;
+					break;
+				}
+				index ++;
+			}while((index % 1024) != 0);
+			if(check == 0)
+			{
+				pd_clear_page_dir_entry(curenv->env_page_directory,(uint32) startVA);
+				kfree((void *)ptr_page);
+			}
+		}
+		startVA += PAGE_SIZE;
+
+	}
+	shares[sharedObjectID].references -- ;
+	struct Share Last_element;
+	Last_element = shares[MAX_SHARES-1];
+	uint32 y;
+	if(shares[sharedObjectID].name == Last_element.name )
+	{
+		y = free_share_object(sharedObjectID);
+		if (y == E_SHARED_MEM_NOT_EXISTS )
+			return y;
+	}
+	return 0;
 
 	// This function should free (delete) the shared object from the User Heapof the current environment
 	// If this is the last shared env, then the "frames_store" should be cleared and the shared object should be deleted

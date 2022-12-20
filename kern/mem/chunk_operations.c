@@ -301,18 +301,10 @@ void free_user_mem(struct Env* e, uint32 virtual_address, uint32 size)
 	//TODO: [PROJECT MS3] [USER HEAP - KERNEL SIDE] free_user_mem
 	// Write your code here, remove the panic and write your code
 	//panic("free_user_mem() is not implemented yet...!!");
-	size = ROUNDUP(size,PAGE_SIZE);
-	virtual_address = ROUNDDOWN(virtual_address,PAGE_SIZE);
-	//uint32 end = ROUNDUP(virtual_address+size,PAGE_SIZE);
-	//virtual_address = ROUNDDOWN(virtual_address,PAGE_SIZE);
-	//cprintf("Before loop\n");
-	//int count =1;
-	int check = 0;
-	for(uint32 i = virtual_address; i < virtual_address + size ;i+=PAGE_SIZE)
+	uint32 end = ROUNDUP(virtual_address+size,PAGE_SIZE);
+	uint32 check;
+	for(uint32 i = virtual_address; i <end  ;i+=PAGE_SIZE)
 	{
-		//cprintf("Before Invalidate\n");
-		//cprintf("%d\n",count);
-		//count++;
 		check = 0;
 		pf_remove_env_page(e,i);
 		env_page_ws_invalidate(e,i);
@@ -322,21 +314,23 @@ void free_user_mem(struct Env* e, uint32 virtual_address, uint32 size)
 		get_page_table(e->env_page_directory,i,&ptr_page);
 		if (ptr_page != NULL)
 		{
-			for(int j = 0; j < 1024;j++)
+			int index = 0;
+			do
 			{
-				if(ptr_page[j] != 0)
+				if(ptr_page[index] != 0)
 				{
 					check = 1;
 					break;
 				}
-			}
+				index ++;
+			}while((index % 1024) != 0);
 			if(check == 0)
 			{
-				pd_clear_page_dir_entry(e->env_page_directory, *ptr_page);
+				pd_clear_page_dir_entry(e->env_page_directory, i);
 				kfree((void *)ptr_page);
-				//pt_set_page_permissions(e->env_page_directory,*ptr_page,0,PERM_PRESENT);
 			}
 		}
+
 	}
 	//This function should:
 	//1. Free ALL pages of the given range from the Page File
